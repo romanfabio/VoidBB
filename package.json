@@ -1,0 +1,26 @@
+{
+  "name": "voidbb",
+  "version": "1.0.0",
+  "description": "NodeJS based forum software",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romanfabio/VoidBB.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/romanfabio/VoidBB/issues"
+  },
+  "homepage": "https://github.com/romanfabio/VoidBB#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "fastify": "^3.14.0",
+    "fastify-formbody": "^5.0.0",
+    "fastify-static": "^4.0.1",
+    "point-of-view": "^4.14.0"
+  }
+}

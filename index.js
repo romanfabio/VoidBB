@@ -7,12 +7,17 @@ let app = fastify({logger: true});
 
 app.register(require('fastify-formbody'));
 
+app.register(require('fastify-static'), {
+    root: path.join(__dirname, 'public'),
+    prefix: '/'
+});
+
 app.register(require('point-of-view'), {
     engine: {
         ejs: require('ejs')
     },
     root: path.join(__dirname, 'src/views'),
-    layout: 'layouts/main.ejs'
+    layout: 'layouts/default.ejs'
 });
 
 routes(app);

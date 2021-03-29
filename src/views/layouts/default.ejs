@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/default.css">
+    <% if(locals.styles) { %>
+        <% for(let i = 0; i < styles.length; i++) { %>
+            <link rel="stylesheet" href="/stylesheets/<%= styles[i] %>">
+        <% } %>
+    <% } %>
+</head>
+<body>
+    <div id="page">
+        <header>
+            <a href="/"><img id="header_logo" src="/images/logo.jpeg"></a>
+        </header>
+        <nav>
+            <ul id="menu">
+                <li class="menu-item"><a href="/">Home</a></li>
+                <li class="menu-item"><a href="/newtopic">New Topic</a></li>
+            </ul>
+        </nav>
+        <main>
+            <%- body %>
+        </main>
+        <footer>
+            <span id="copyright">&copy; VoidBB</span>
+        </footer>
+    </div>
+</body>
+</html>

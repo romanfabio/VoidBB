@@ -1,4 +1,5 @@
 const fastify = require('fastify');
+const fs = require('fs');
 const path = require('path');
 const routes = require('./src/routes/routes');
 const port = process.env.PORT || 3000;
@@ -6,6 +7,16 @@ const port = process.env.PORT || 3000;
 let app = fastify({logger: false});
 
 app.register(require('fastify-formbody'));
+
+app.register(require('fastify-secure-session'), {
+    cookieName: 'voidbb',
+
+    key: fs.readFileSync(path.join(__dirname, 'secret-key')),
+    cookie: {
+        path: '/'
+    }
+});
+
 
 app.register(require('fastify-static'), {
     root: path.join(__dirname, 'public'),

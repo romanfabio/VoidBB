@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const fieldValidator = require('../util/authenticationFieldValidator');
+const validator = require('validator');
 
 module.exports = {
     get: (request, reply) => {
@@ -28,6 +29,7 @@ module.exports = {
                 else {
                     data.password = hash;
                     db.insertUser(data);
+                    request.session.set('username', data.username);
                     reply.redirect('/');
                 }
             });

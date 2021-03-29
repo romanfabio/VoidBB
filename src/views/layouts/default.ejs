@@ -21,8 +21,13 @@
             <ul id="menu">
                 <li class="menu-item left"><a href="/">Home</a></li>
                 <li class="menu-item left"><a href="/newtopic">New Topic</a></li>
+                <% if(!locals.auth) { %>
                 <li class="menu-item right"><a href="/register">Register</a></li>
                 <li class="menu-item right"><a href="/login">Login</a></li>
+                <% } else { %>
+                <li class="menu-item right"><a href="/logout">Logout</a></li>
+                <li class="menu-item right">Hello, <%= auth.username %></li>
+                <% } %>
             </ul>
         </nav>
         <main>

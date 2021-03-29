@@ -22,9 +22,15 @@
                 <li class="menu-item left"><a href="/">Home</a></li>
                 <li class="menu-item left"><a href="/newtopic">New Topic</a></li>
                 <li class="menu-item right"><a href="/register">Register</a></li>
+                <li class="menu-item right"><a href="/login">Login</a></li>
             </ul>
         </nav>
         <main>
+            <% if( locals.error ) { %>
+            <div id="error-div">
+                <h5 id="error"><%= error %></h5>
+            </div>
+            <% } %>
             <%- body %>
         </main>
         <footer>

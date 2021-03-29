@@ -41,6 +41,17 @@ main {
     padding: 30px 20px;
 }
 
+#error-div {
+    margin: 10px auto;
+    border: 1px solid red;
+    background-color: salmon;
+    padding: 10px 20px;
+}
+
+#error {
+    color: red;
+}
+
 footer {
     padding: 10px;
     background-color: #666;

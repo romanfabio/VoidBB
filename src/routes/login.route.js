@@ -1,26 +1,25 @@
-const registerController = require('../controllers/register.controller');
+const loginController = require('../controllers/login.controller');
 
 module.exports = (app) => {
     app.route({
         method: 'GET',
-        url: '/register',
-        handler: registerController.get
+        url: '/login',
+        handler: loginController.get
     });
 
     app.route({
         method: 'POST',
-        url: '/register',
+        url: '/login',
         schema: {
             body: {
                 type: "object",
                 properties: {
                     username: {type: 'string', nullable: false},
-                    email: {type:'string', nullable: false},
                     password: {type: 'string', nullable: false}
                 },
-                required: ['username','email','password']
+                required: ['username','password']
             }
         },
-        handler: registerController.post
+        handler: loginController.post
     });
 };

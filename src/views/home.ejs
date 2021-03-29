@@ -1,7 +1,23 @@
-<h1>Hello World!</h1>
-<% if(locals.posts) { %>
-    <% for(let i = 0; i < posts.length; i++) { %>
-        <h2><%= posts[i].title %></h2>
-        <p><%= posts[i].description %></p>
+<h1>Ultimi topic</h1>
+<% if(locals.topics) { %>
+    <% for(let i = 0; i < topics.length; i++) { %>
+        <div class="topic-preview">
+            <h3><%= topics[i].title %></h3>
+            <p><%= topics[i].description %></p>
+        </div>
     <% } %>
+<% } %>
+
+<% if(locals.users) { %>
+    <ul>
+    <% for(let i = 0; i < users.length; i++) { %>
+        <li>
+            <ul>
+                <li><%= users[i].username %></li>
+                <li><%= users[i].email %></li>
+                <li><%= users[i].password %></li>
+            </ul>
+        </li>
+    <% } %>
+    </ul>
 <% } %>

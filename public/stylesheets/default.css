@@ -20,12 +20,16 @@ header {
     border-radius: 5px;
 }
 
-.menu-item {
+.left{
     float: left;
 }
 
+.right {
+    float: right;
+}
+
 .menu-item a {
-    color: #333;
+    color: #000;
     display: block;
     text-align: center;
     padding: 14px 16px;
@@ -45,5 +49,5 @@ footer {
 }
 
 #copyright {
-    color: #333;
+    color: #000;
 }

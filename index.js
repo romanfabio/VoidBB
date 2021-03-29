@@ -3,7 +3,7 @@ const path = require('path');
 const routes = require('./src/routes/routes');
 const port = process.env.PORT || 3000;
 
-let app = fastify({logger: true});
+let app = fastify({logger: false});
 
 app.register(require('fastify-formbody'));
 

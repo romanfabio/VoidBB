@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const bcrypt = require('bcrypt');
 
 module.exports = {
     get: (request, reply) => {
@@ -6,7 +7,16 @@ module.exports = {
     },
 
     post: (request, reply) => {
-        db.insertUser(request.body);
-        reply.redirect('/');
+        let data = request.body;
+        
+        bcrypt.hash(data.password, 10, (err, hash) => {
+            if(err)
+                console.log('Bcrypt failed');
+            else {
+                data.password = hash;
+                db.insertUser(data);
+                reply.redirect('/');
+            }
+        });
     }
 }

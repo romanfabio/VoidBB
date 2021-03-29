@@ -20,6 +20,7 @@
     "ejs": "^3.1.6",
     "fastify": "^3.14.0",
     "fastify-formbody": "^5.0.0",
+    "fastify-secure-session": "^2.3.1",
     "fastify-static": "^4.0.1",
     "mongoose": "^5.12.2",
     "point-of-view": "^4.14.0"

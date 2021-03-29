@@ -1,8 +1,7 @@
+const homeController = require('./../controllers/home.controllers');
 async function routes(fastify, options) {
 
-    fastify.get('/', (request, reply) => {
-        reply.view('index.ejs', {title: 'Home'});
-    });
+    fastify.get('/', homeController);
 }
 
 module.exports = routes;

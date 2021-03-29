@@ -1,1 +1,7 @@
 <h1>Hello World!</h1>
+<% if(locals.posts) { %>
+    <% for(let i = 0; i < posts.length; i++) { %>
+        <h2><%= posts[i].title %></h2>
+        <p><%= posts[i].description %></p>
+    <% } %>
+<% } %>

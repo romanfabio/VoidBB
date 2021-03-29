@@ -7,5 +7,8 @@ module.exports = {
     },
     getAllUsers: () => {
         return user;
+    },
+    insertPost: (p) => {
+        post.push(p);
     }
 }

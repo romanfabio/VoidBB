@@ -3,6 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const routes = require('./src/routes/routes');
 const port = process.env.PORT || 3000;
+const db = require('./src/database/config/config');
+
+db.init();
 
 let app = fastify({logger: false});
 

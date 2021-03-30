@@ -23,7 +23,10 @@
     "fastify-formbody": "^5.0.0",
     "fastify-secure-session": "^2.3.1",
     "fastify-static": "^4.0.1",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
     "point-of-view": "^4.14.0",
+    "sequelize": "^6.6.2",
     "validator": "^13.5.2"
   },
   "devDependencies": {

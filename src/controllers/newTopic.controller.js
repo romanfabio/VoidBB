@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../database/db');
 
 module.exports = {
     get: (request, reply) => {
@@ -6,7 +6,14 @@ module.exports = {
     },
 
     post: (request, reply) => {
-        db.insertPost(request.body);
-        reply.redirect('/');
+        const data = request.body;
+        const TopicModel = db.getTopicModel();
+
+                    TopicModel.create({title: data.title, description: data.description, creator: 'mrvoid'}).then((value) => {
+                        reply.redirect('/');
+                    }, (err) => {
+                        request.log.info(err);
+                        reply.view('newTopic.ejs', {title: 'New Topic', error: 'An error has occured, retry later'});
+                    });
     }
 }

@@ -4,3 +4,14 @@ create table users (
     email varchar(64) not null,
     primary key(username)
 );
+
+create table topics (
+    id serial not null,
+    title varchar(255) not null,
+    description text not null,
+    creator varchar(32) not null,
+    upload_timestamp timestamp not null default NOW(),
+
+    primary key(id),
+    foreign key(creator) references "Users"(username)
+);

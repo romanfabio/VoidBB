@@ -9,5 +9,8 @@ module.exports = {
     },
     isEmailValid: (str) => {
         return validator.isEmail(str);
+    },
+    isNotEmpty: (str) => {
+        return str.length > 0;
     }
 }

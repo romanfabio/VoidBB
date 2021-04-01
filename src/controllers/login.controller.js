@@ -6,10 +6,12 @@ const { Op } = require('sequelize');
 
 module.exports = {
     get: (request, reply) => {
+        const viewParams = { title: 'Login' };
+
         if(request.isAuth)
             reply.redirect('/');
         else
-            reply.view('login.ejs', {title: 'Login'});
+            reply.view('login.ejs', viewParams);
     },
 
     post: (request, reply) => {
@@ -17,6 +19,8 @@ module.exports = {
             reply.redirect('/');
             return;
         }
+
+        const viewParams = { title: 'Login' };
 
         const data = request.body;
         data.username = validator.trim(data.username);
@@ -36,22 +40,26 @@ module.exports = {
                 bcrypt.compare(data.password, value[0].password, (err, result) => {
                     if(err) {
                         request.log.info(err);
-                        reply.view('login.ejs', {title: 'Login', error: 'An error has occured, retry later'});
+                        viewParams.error = 'An error has occured, retry later';
+                        reply.view('login.ejs', viewParams);
                     } else {
                         if(result) {
                             request.session.set('username', data.username);
                             reply.redirect('/');
                         } else {
-                            reply.view('login.ejs', {title: 'Login', error: 'Username and/or password invalid'});
+                            viewParams.error = 'Username and/or password invalid';
+                            reply.view('login.ejs', viewParams);
                         }
                     }
                 });
             } else {
-                reply.view('login.ejs', {title: 'Login', error: 'Username and/or password invalid'});
+                viewParams.error = 'Username and/or password invalid';
+                reply.view('login.ejs', viewParams);
             }
         }, (err) => {
             request.log.info(err);
-            reply.view('login.ejs', {title: 'Login', error: 'An error has occured, retry later'});
+            viewParams.error = 'An error has occured, retry later';
+            reply.view('login.ejs', viewParams);
         });
         
     }

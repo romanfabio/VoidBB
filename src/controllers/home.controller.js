@@ -3,15 +3,20 @@ const db = require('../database/db');
 module.exports = {
     get: (request, reply) => {
 
+        const viewParams = { title: 'Home', styles: ['home.css'] };
+
         const topicModel = db.getTopicModel();
 
         topicModel.findAll().then((value) => {
+
+            viewParams.topics = value;
             if(request.isAuth)
-                reply.view('home.ejs', {title: 'Home', styles: ['home.css'], topics: value, auth: request.authUsername});
-            else
-                reply.view('home.ejs', {title: 'Home', styles: ['home.css'], topics: value});
+                viewParams.auth = request.authUsername;
+            
+            reply.view('home.ejs', viewParams);
         }, (err) => {
-            reply.view('home.ejs', {title: 'Home', styles: ['home.css'], error: 'An error has occured, retry later'});
+            viewParams.error = 'An error has occured, retry later';
+            reply.view('home.ejs', viewParams);
         });
     }
 }

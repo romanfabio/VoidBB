@@ -9,7 +9,6 @@ module.exports = {
     },
 
     post: (request, reply) => {
-        const auth = request.session-this.get('username');
         
         const data = request.body;
         const TopicModel = db.getTopicModel();

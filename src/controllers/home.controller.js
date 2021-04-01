@@ -2,7 +2,7 @@ const db = require('../database/db');
 
 module.exports = {
     get: (request, reply) => {
-        console.log(request);
+
         const topicModel = db.getTopicModel();
 
         topicModel.findAll().then((value) => {

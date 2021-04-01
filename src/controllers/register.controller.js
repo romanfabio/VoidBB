@@ -1,6 +1,6 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
-const fieldValidator = require('../util/authenticationFieldValidator');
+const fieldValidator = require('../util/fieldValidator');
 const validator = require('validator');
 
 module.exports = {

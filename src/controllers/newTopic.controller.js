@@ -1,29 +1,26 @@
 const db = require('../database/db');
 const validator = require('validator');
 const fieldValidator = require('../util/fieldValidator');
+const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
-        const viewParams = { title: 'New Topic' };
 
         if(request.isAuth) {
-            viewParams.auth = request.authUsername;
-            reply.view('newTopic.ejs', viewParams);
+            viewer.newTopic(reply, {auth: request.authUsername});
         }
         else {
-            reply.view('login.ejs', {title: 'Login', error: 'You must be logged to create topics'});
+            viewer.login(reply, {error: 'You must be logged to create topics'});
         }
     },
 
     post: (request, reply) => {
 
         if(!request.isAuth) {
-            reply.view('login.ejs', {title: 'Login', error: 'You must be logged to create topics'});
+            viewer.login(reply, {error: 'You must be logged to create topics'});
             return;
         }
 
-        const viewParams = {title: 'New Topic' };
-        
         const data = request.body;
         data.title = validator.trim(data.title);
         data.description = validator.trim(data.description);
@@ -36,16 +33,13 @@ module.exports = {
                     reply.redirect('/');
                 }, (err) => {
                     request.log.info(err);
-                    viewParams.error = 'An error has occured, retry later';
-                    reply.view('newTopic.ejs', viewParams);
+                    viewer.newTopic(reply, {error: 'An error has occured, retry later'});
                 });
             } else {
-                viewParams.error = 'Invalid description';
-                reply.view('newTopic.ejs', viewParams);
+                viewer.newTopic(reply, {error: 'Invalid description'});
             }
         } else {
-            viewParams.error = 'Invalid title';
-            reply.view('newTopic.ejs', viewParams);
+            viewer.newTopic(reply, {error: 'Invalid title'});
         }
         
     }

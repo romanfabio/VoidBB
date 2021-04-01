@@ -1,22 +1,20 @@
 const db = require('../database/db');
+const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
-
-        const viewParams = { title: 'Home', styles: ['home.css'] };
 
         const topicModel = db.getTopicModel();
 
         topicModel.findAll().then((value) => {
 
-            viewParams.topics = value;
+            const viewParams = {topics: value};
             if(request.isAuth)
                 viewParams.auth = request.authUsername;
             
-            reply.view('home.ejs', viewParams);
+            viewer.home(reply, viewParams);
         }, (err) => {
-            viewParams.error = 'An error has occured, retry later';
-            reply.view('home.ejs', viewParams);
+            viewer.home(reply, {error: 'An error has occured, retry later'});
         });
     }
 }

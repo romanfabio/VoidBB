@@ -2,10 +2,15 @@ const db = require('../database/db');
 
 module.exports = {
     get: (request, reply) => {
-        reply.view('newTopic.ejs', {title: 'New Topic'});
+        if(request.isAuth)
+            reply.view('newTopic.ejs', {title: 'New Topic'});
+        else
+            reply.view('login.ejs', {title: 'Login', error: 'You must be logged to create topics'});
     },
 
     post: (request, reply) => {
+        const auth = request.session-this.get('username');
+        
         const data = request.body;
         const TopicModel = db.getTopicModel();
 

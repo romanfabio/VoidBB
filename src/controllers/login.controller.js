@@ -6,16 +6,14 @@ const { Op } = require('sequelize');
 
 module.exports = {
     get: (request, reply) => {
-        const auth = request.session.get('username');
-        if(!auth)
-            reply.view('login.ejs', {title: 'Login'});
-        else
+        if(request.isAuth)
             reply.redirect('/');
+        else
+            reply.view('login.ejs', {title: 'Login'});
     },
 
     post: (request, reply) => {
-        const auth = request.session.get('username');
-        if(auth) {
+        if(request.isAuth) {
             reply.redirect('/');
             return;
         }

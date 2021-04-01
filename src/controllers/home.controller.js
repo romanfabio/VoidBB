@@ -2,13 +2,12 @@ const db = require('../database/db');
 
 module.exports = {
     get: (request, reply) => {
-
+        console.log(request);
         const topicModel = db.getTopicModel();
 
         topicModel.findAll().then((value) => {
-            const auth = request.session.get('username');
-            if(auth)
-                reply.view('home.ejs', {title: 'Home', styles: ['home.css'], topics: value, auth: auth});
+            if(request.isAuth)
+                reply.view('home.ejs', {title: 'Home', styles: ['home.css'], topics: value, auth: request.authUsername});
             else
                 reply.view('home.ejs', {title: 'Home', styles: ['home.css'], topics: value});
         }, (err) => {

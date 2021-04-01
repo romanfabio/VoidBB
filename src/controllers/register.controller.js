@@ -5,16 +5,14 @@ const validator = require('validator');
 
 module.exports = {
     get: (request, reply) => {
-        const auth = request.session.get('username');
-        if(!auth)
-            reply.view('register.ejs', {title: 'Register'});
-        else
+        if(request.isAuth)
             reply.redirect('/');
+        else
+            reply.view('register.ejs', {title: 'Register'});
     },
 
     post: (request, reply) => {
-        const auth = request.session.get('username');
-        if(auth) {
+        if(request.isAuth) {
             reply.redirect('/');
             return;
         }

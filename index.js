@@ -34,6 +34,18 @@ app.register(require('point-of-view'), {
     layout: 'layouts/default.ejs'
 });
 
+
+app.addHook('onRequest', (request, reply, done) => {
+    const auth = request.session.get('username');
+    if(auth) {
+        request.isAuth = true;
+        request.authUsername = auth;
+    } else {
+        request.isAuth = false;
+    }
+    done();
+});
+
 routes(app);
 
 app.listen(port, err => {

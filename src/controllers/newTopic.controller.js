@@ -33,13 +33,13 @@ module.exports = {
                     reply.redirect('/');
                 }, (err) => {
                     request.log.info(err);
-                    viewer.newTopic(reply, {error: 'An error has occured, retry later'});
+                    viewer.newTopic(reply, {auth: request.authUsername, error: 'An error has occured, retry later'});
                 });
             } else {
-                viewer.newTopic(reply, {error: 'Invalid description'});
+                viewer.newTopic(reply, {auth: request.authUsername, error: 'Invalid description'});
             }
         } else {
-            viewer.newTopic(reply, {error: 'Invalid title'});
+            viewer.newTopic(reply, {auth: request.authUsername, error: 'Invalid title'});
         }
         
     }

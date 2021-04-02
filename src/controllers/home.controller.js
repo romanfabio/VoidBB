@@ -3,18 +3,20 @@ const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
+        const viewParams = {};
+        if(request.isAuth)
+            viewParams.auth = request.authUsername;
 
         const forumModel = db.getForumModel();
 
         forumModel.findAll().then((value) => {
 
-            const viewParams = {forums: value};
-            if(request.isAuth)
-                viewParams.auth = request.authUsername;
+            viewParams.forums = value;
             
             viewer.home(reply, viewParams);
         }, (err) => {
-            viewer.home(reply, {error: 'An error has occured, retry later'});
+            viewParams.error = 'An error has occured, retry later';
+            viewer.home(reply, viewParams);
         });
     }
 }

@@ -10,5 +10,12 @@ module.exports = {
     },
     newTopic: (reply, extra) => {
         reply.view('newTopic.ejs', {title: 'New Topic', ...extra});
+    },
+    viewForum: (reply, extra) => {
+        reply.view('viewForum.ejs', {title: 'View Forum', ...extra});
+    },
+    newForum: (reply, extra) => {
+        reply.view('newForum.ejs', {title: 'New Forum', ...extra});
     }
+    
 }

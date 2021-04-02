@@ -1,0 +1,11 @@
+<h1>Topics</h1>
+
+<% if(locals.topics) { %>
+    <% for(let i = 0; i < topics.length; i++) { %>
+        <div class="topic-preview">
+            <h3><a href="/topic/<%= topics[i].id %>"><%= topics[i].name %></a></h3>
+        </div>
+    <% } %>
+<% } %>
+
+<a href="/newtopic?f=<%= forum %>">New Topic</a>

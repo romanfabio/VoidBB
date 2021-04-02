@@ -1,23 +1,11 @@
-<h1>Ultimi topic</h1>
-<% if(locals.topics) { %>
-    <% for(let i = 0; i < topics.length; i++) { %>
-        <div class="topic-preview">
-            <h3><%= topics[i].title %></h3>
-            <p><%= topics[i].description %></p>
+<h1>Forums</h1>
+<% if(locals.forums) { %>
+    <% for(let i = 0; i < forums.length; i++) { %>
+        <div class="forum-preview">
+            <h3><a href="/forum/<%= forums[i].id %>"><%= forums[i].name %></a></h3>
+            <p><%= forums[i].description %></p>
         </div>
     <% } %>
 <% } %>
 
-<% if(locals.users) { %>
-    <ul>
-    <% for(let i = 0; i < users.length; i++) { %>
-        <li>
-            <ul>
-                <li><%= users[i].username %></li>
-                <li><%= users[i].email %></li>
-                <li><%= users[i].password %></li>
-            </ul>
-        </li>
-    <% } %>
-    </ul>
-<% } %>
+<a href="/newforum">New Forum</a>

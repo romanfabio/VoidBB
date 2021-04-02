@@ -4,11 +4,11 @@ const viewer = require('../util/viewer');
 module.exports = {
     get: (request, reply) => {
 
-        const topicModel = db.getTopicModel();
+        const forumModel = db.getForumModel();
 
-        topicModel.findAll().then((value) => {
+        forumModel.findAll().then((value) => {
 
-            const viewParams = {topics: value};
+            const viewParams = {forums: value};
             if(request.isAuth)
                 viewParams.auth = request.authUsername;
             

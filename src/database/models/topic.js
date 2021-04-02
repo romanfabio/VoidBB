@@ -8,25 +8,16 @@ module.exports = async (sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        title: {
-            type: DataTypes.STRING(255),
-            allowNull: false
-        },
-        description: {
-            type: DataTypes.TEXT,
-            allowNull: false
-        },
-        creator: {
-            type: DataTypes.STRING(32),
+        forum_id: {
+            type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: sequelize.models.User,
-                key: 'username'
+                model: sequelize.models.Forum,
+                key: 'id'
             }
         },
-        upload_timestamp: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
+        name: {
+            type: DataTypes.STRING(64),
             allowNull: false
         }
     },

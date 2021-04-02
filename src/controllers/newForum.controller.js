@@ -5,20 +5,29 @@ const validator = require('validator');
 
 module.exports = {
     get: (request, reply) => {
+        const viewParams = {};
+
         if(request.isAuth) {
-            viewer.newForum(reply, {auth: request.authUsername});
+            viewParams.auth = request.authUsername;
+            viewer.newForum(reply, viewParams);
         }
         else {
-            viewer.login(reply, {error: 'You must be logged to create forums'});
+            viewParams.error = 'You must be logged to create forums';
+            viewer.login(reply, viewParams);
         }
     },
 
     post: (request, reply) => {
 
+        const viewParams = {};
+
         if(!request.isAuth) {
-            viewer.login(reply, {error: 'You must be logged to create forums'});
+            viewParams.error = 'You must be logged to create forums';
+            viewer.login(reply, viewParams);
             return;
         }
+
+        viewParams.auth = request.authUsername;
 
         const data = request.body;
         data.name = validator.trim(data.name);
@@ -32,13 +41,16 @@ module.exports = {
                     reply.redirect('/');
                 }, (err) => {
                     request.log.info(err);
-                    viewer.newForum(reply, {auth: request.authUsername, error: 'An error has occured, retry later'});
+                    viewParams.error = 'An error has occured, retry later';
+                    viewer.newForum(reply, viewParams);
                 });
             } else {
-                viewer.newForum(reply, {auth: request.authUsername, error: 'Invalid description'});
+                viewParams.error = 'Invalid description';
+                viewer.newForum(reply, viewParams);
             }
         } else {
-            viewer.newForum(reply, {auth: request.authUsername, error: 'Invalid name'});
+            viewParams.error = 'Invalid name';
+            viewer.newForum(reply, viewParams);
         }
     }
 };

@@ -5,23 +5,36 @@ const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
+        const viewParams = {};
+
         if(request.isAuth) {
-            viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f});
+            viewParams.auth = request.authUsername;
+            viewParams.forum = request.query.f;
+            viewer.newTopic(reply, viewParams);
         }
         else {
-            viewer.login(reply, {error: 'You must be logged to create topics'});
+            viewParams.error = 'You must be logged to create topics';
+            viewer.login(reply, viewParams);
         }
     },
 
     post: (request, reply) => {
 
+        const viewParams = {};
+
         if(!request.isAuth) {
-            viewer.login(reply, {error: 'You must be logged to create topics'});
+            viewParams.error = 'You must be logged to create topics';
+            viewer.login(reply, viewParams);
             return;
         }
 
+        viewParams.auth = request.authUsername;
+        viewParams.forum = request.query.f;
+
         const data = request.body;
         data.name = validator.trim(data.name);
+        data.description = validator.trim(data.description);
+
         if(fieldValidator.isNotEmpty(data.description)) {
             if(fieldValidator.isNotEmpty(data.name)) {
                 const TopicModel = db.getTopicModel();
@@ -45,13 +58,16 @@ module.exports = {
                     .catch((err) => {
                         trans.rollback();
                         request.log.info(err);
-                        viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'An error has occured, retry later'});     
+                        viewParams.error = 'An error has occured, retry later';
+                        viewer.newTopic(reply, viewParams);     
                     });
             } else {
-                viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'Invalid name'});
+                viewParams.error = 'Invalid name';
+                viewer.newTopic(reply, viewParams);
             }
         } else {
-            viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'Invalid description'});
+            viewParams.error = 'Invalid description';
+            viewer.newTopic(reply, viewParams);
         }
     }
 }

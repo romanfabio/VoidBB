@@ -1,13 +1,11 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
-const fieldValidator = require('../util/fieldValidator');
 const validator = require('validator');
 const { Op } = require('sequelize');
 const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
-
         if(request.isAuth)
             reply.redirect('/');
         else
@@ -19,6 +17,8 @@ module.exports = {
             reply.redirect('/');
             return;
         }
+
+        const viewParams = {};
 
         const data = request.body;
         data.username = validator.trim(data.username);
@@ -38,22 +38,26 @@ module.exports = {
                 bcrypt.compare(data.password, value[0].password, (err, result) => {
                     if(err) {
                         request.log.info(err);
-                        viewer.login(reply, {error: 'An error has occured, retry later'});
+                        viewParams.error = 'An error has occured, retry later';
+                        viewer.login(reply, viewParams);
                     } else {
                         if(result) {
                             request.session.set('username', data.username);
                             reply.redirect('/');
                         } else {
-                            viewer.login(reply, {error: 'Username and/or password invalid'});
+                            viewParams.error = 'Username and/or password invalid';
+                            viewer.login(reply, viewParams);
                         }
                     }
                 });
             } else {
-                viewer.login(reply, {error: 'Username and/or password invalid'});
+                viewParams.error = 'Username and/or password invalid';
+                viewer.login(reply, viewParams);
             }
         }, (err) => {
             request.log.info(err);
-            viewer.login(reply, {error: 'An error has occured, retry later'});
+            viewParams.error = 'An error has occured, retry later';
+            viewer.login(reply, viewParams);
         });
         
     }

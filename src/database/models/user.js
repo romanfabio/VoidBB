@@ -12,7 +12,7 @@ module.exports = async (sequelize) => {
             allowNull: false
         },
         email: {
-            type: DataTypes.STRING(64),
+            type: DataTypes.STRING(128),
             allowNull: false
         }
     },

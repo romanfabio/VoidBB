@@ -17,7 +17,7 @@ module.exports = async (sequelize) => {
             }
         },
         name: {
-            type: DataTypes.STRING(64),
+            type: DataTypes.STRING(128),
             allowNull: false
         }
     },

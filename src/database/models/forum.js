@@ -21,5 +21,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await Forum.sync();
+    await Forum.sync({force: true});
 }

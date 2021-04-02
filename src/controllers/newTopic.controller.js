@@ -36,19 +36,16 @@ module.exports = {
                     .then((value) => {
                         return PostModel.create({topic_id: value.id, description: data.description, creator: request.authUsername}, {transaction: trans});
                     })
-                    .then((value) => {
+                    .then(() => {
                         return trans.commit();
                     })
-                    .then((value) => {
+                    .then(() => {
                         reply.redirect('/forum/' + request.query.f);
                     })
                     .catch((err) => {
-                        if(err) {
-                            console.log(err);
-                            trans.rollback();
-                            request.log.info(err);
-                            viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'An error has occured, retry later'});
-                        }
+                        trans.rollback();
+                        request.log.info(err);
+                        viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'An error has occured, retry later'});     
                     });
             } else {
                 viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'Invalid name'});

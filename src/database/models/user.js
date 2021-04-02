@@ -20,5 +20,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await User.sync();
+    await User.sync({force: true});
 }

@@ -1,5 +1,5 @@
 const homeRoute = require('./home.route');
-const newTopicRoute = require('./newTopic.route');
+const topicRoute = require('./topic.route');
 const registerRoute = require('./register.route');
 const loginRoute = require('./login.route');
 const logoutRoute = require('./logout.route');
@@ -7,7 +7,7 @@ const forumRoute = require('./forum.route');
 
 module.exports = (app) => {
     homeRoute(app);
-    newTopicRoute(app);
+    topicRoute(app);
     registerRoute(app);
     loginRoute(app);
     logoutRoute(app);

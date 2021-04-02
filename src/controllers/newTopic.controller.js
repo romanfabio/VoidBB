@@ -5,9 +5,8 @@ const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
-
         if(request.isAuth) {
-            viewer.newTopic(reply, {auth: request.authUsername});
+            viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f});
         }
         else {
             viewer.login(reply, {error: 'You must be logged to create topics'});
@@ -22,25 +21,40 @@ module.exports = {
         }
 
         const data = request.body;
-        data.title = validator.trim(data.title);
-        data.description = validator.trim(data.description);
-
-        if(fieldValidator.isNotEmpty(data.title)) {
-            if(fieldValidator.isNotEmpty(data.description)) {
+        data.name = validator.trim(data.name);
+        if(fieldValidator.isNotEmpty(data.description)) {
+            if(fieldValidator.isNotEmpty(data.name)) {
                 const TopicModel = db.getTopicModel();
+                const PostModel = db.getPostModel();
 
-                TopicModel.create({title: data.title, description: data.description, creator: request.authUsername}).then((value) => {
-                    reply.redirect('/');
-                }, (err) => {
-                    request.log.info(err);
-                    viewer.newTopic(reply, {auth: request.authUsername, error: 'An error has occured, retry later'});
-                });
+                let trans;
+                db.generateTransaction()
+                    .then((value) => {
+                        trans = value;
+                        return TopicModel.create({forum_id: request.query.f, name: data.name}, {transaction: trans});
+                    })
+                    .then((value) => {
+                        return PostModel.create({topic_id: value.id, description: data.description, creator: request.authUsername}, {transaction: trans});
+                    })
+                    .then((value) => {
+                        return trans.commit();
+                    })
+                    .then((value) => {
+                        reply.redirect('/forum/' + request.query.f);
+                    })
+                    .catch((err) => {
+                        if(err) {
+                            console.log(err);
+                            trans.rollback();
+                            request.log.info(err);
+                            viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'An error has occured, retry later'});
+                        }
+                    });
             } else {
-                viewer.newTopic(reply, {auth: request.authUsername, error: 'Invalid description'});
+                viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'Invalid name'});
             }
         } else {
-            viewer.newTopic(reply, {auth: request.authUsername, error: 'Invalid title'});
+            viewer.newTopic(reply, {auth: request.authUsername, forum: request.query.f, error: 'Invalid description'});
         }
-        
     }
 }

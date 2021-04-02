@@ -21,6 +21,9 @@ module.exports = {
         await TopicModel(sequelize);
         await PostModel(sequelize);
     },
+    generateTransaction: () => {
+        return sequelize.transaction();
+    },
     getUserModel: () => {
         return sequelize.models.User;
     },

@@ -5,7 +5,10 @@ const routes = require('./src/routes/routes');
 const port = process.env.PORT || 3000;
 const db = require('./src/database/db');
 
-db.init();
+db.init().then(() => {
+    const variableManager = require('./src/util/variableManager');
+    variableManager.reload();
+});
 
 let app = fastify({logger: false});
 

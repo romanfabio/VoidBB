@@ -10,11 +10,16 @@ module.exports = async (sequelize) => {
         value: {
             type: DataTypes.STRING(255),
             allowNull: true
+        },
+        isInt: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     },
     {
         timestamps: false
     });
 
-    await Variable.sync({force: true});
+    await Variable.sync();
 }

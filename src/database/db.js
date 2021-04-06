@@ -8,9 +8,9 @@ const VariableModel = require('./models/variable');
 const sequelize = new Sequelize('postgres://voidbbuser:voidbbuser@localhost:5432/voidbb');
 
 module.exports = {
-    init: () => {
+    init: async () => {
 
-        sequelize.authenticate()
+        await sequelize.authenticate()
             .then(() => VariableModel(sequelize))
             .then(() => UserModel(sequelize))
             .then(() => ForumModel(sequelize))

@@ -7,9 +7,9 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.isAuth)
+        if(request.isAuth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
-        else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) {
+        else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
             viewer.register(reply, {});
         } else {
             viewer.home(reply, {error: 'You don\'t have the permission'});
@@ -17,10 +17,14 @@ module.exports = {
     },
 
     post: (request, reply) => {
+
+        // L'utente autenticato non ha bisogno di autenticarsi di nuovo
         if(request.isAuth) {
             reply.redirect('/');
             return;
         }
+
+        // Controlla se il gruppo Anonymous ha il permesso di registrarsi
         if(!pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) {
             viewer.home(reply, {error: 'You don\'t have the permission'});
             return;
@@ -29,6 +33,8 @@ module.exports = {
         const viewParams = {};
 
         const data = request.body;
+
+        // Rimuovi eventuali spazi 'bianchi'
         data.username = validator.trim(data.username);
         data.password = validator.trim(data.password);
         data.email = validator.trim(data.email);

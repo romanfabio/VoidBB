@@ -3,13 +3,15 @@ const UserModel = require('./models/user');
 const TopicModel = require('./models/topic');
 const ForumModel = require('./models/forum');
 const PostModel = require('./models/post');
+const VariableModel = require('./models/variable');
 
 const sequelize = new Sequelize('postgres://voidbbuser:voidbbuser@localhost:5432/voidbb');
 
 module.exports = {
     init: () => {
-        
+
         sequelize.authenticate()
+            .then(() => VariableModel(sequelize))
             .then(() => UserModel(sequelize))
             .then(() => ForumModel(sequelize))
             .then(() => TopicModel(sequelize))
@@ -22,16 +24,13 @@ module.exports = {
     generateTransaction: () => {
         return sequelize.transaction();
     },
-    getUserModel: () => {
-        return sequelize.models.User;
-    },
-    getTopicModel: () => {
-        return sequelize.models.Topic;
-    },
-    getForumModel: () => {
-        return sequelize.models.Forum;
-    },
-    getPostModel: () => {
-        return sequelize.models.Post;
-    }
+    getVariableModel: () => sequelize.models.Variable,
+
+    getUserModel: () => sequelize.models.User,
+
+    getTopicModel: () => sequelize.models.Topic,
+
+    getForumModel: () => sequelize.models.Forum,
+
+    getPostModel: () => sequelize.models.Post
 }   

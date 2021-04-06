@@ -2,15 +2,10 @@ const { DataTypes } = require("sequelize");
 
 module.exports = async (sequelize) => {
     const Forum = sequelize.define('Forum', {
-        id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            autoIncrement: true,
-            primaryKey: true
-        },
         name: {
             type: DataTypes.STRING(64),
-            allowNull: false
+            allowNull: false,
+            primaryKey: true
         },
         description: {
             type: DataTypes.STRING(255),

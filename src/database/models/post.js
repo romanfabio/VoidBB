@@ -3,17 +3,17 @@ const { DataTypes } = require("sequelize");
 module.exports = async (sequelize) => {
     const Post = sequelize.define('Post', {
         id: { 
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
             allowNull: false,
             autoIncrement: true,
             primaryKey: true
         },
-        topic_id: {
-            type: DataTypes.INTEGER,
+        forum_id: {
+            type: DataTypes.STRING(64),
             allowNull: false,
             references: {
-                model: sequelize.models.Topic,
-                key: 'id'
+                model: sequelize.models.Forum,
+                key: 'name'
             }
         },
         description: {
@@ -28,7 +28,7 @@ module.exports = async (sequelize) => {
                 key: 'username'
             }
         },
-        upload_timestamp: {
+        created: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
             allowNull: false

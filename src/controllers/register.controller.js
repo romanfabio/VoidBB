@@ -1,6 +1,6 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
-const fieldValidator = require('../util/fieldValidator');
+const variableManager = require('../util/variableManager');
 const validator = require('validator');
 const viewer = require('../util/viewer');
 
@@ -25,16 +25,28 @@ module.exports = {
         data.password = validator.trim(data.password);
         data.email = validator.trim(data.email);
         
-        if(!fieldValidator.isEmailValid(data.email)) {
+        if(!validator.isEmail(data.email)) {
+
             viewParams.error = 'Invalid email';
             viewer.register(reply, viewParams);
-        } else if(!fieldValidator.isPasswordValid(data.password)) {
+
+        } else if(!validator.isStrongPassword(data.password) || 
+                    data.password.length < variableManager.get('PASSWORD_MIN_LENGTH') ||
+                    data.password.length > variableManager.get('PASSWORD_MAX_LENGTH')) {
+
             viewParams.error = 'Invalid password';
             viewer.register(reply, viewParams);
-        } else if(!fieldValidator.isUsernameValid(data.username)) {
+
+        } else if(!validator.isAscii(data.username) || 
+                    (!validator.matches(data.username,  /^[a-zA-Z_][0-9a-zA-Z_]*$/)) ||
+                    data.username.length < variableManager.get('USERNAME_MIN_LENGTH') ||
+                    data.username.length > variableManager.get('USERNAME_MAX_LENGTH')) {
+
             viewParams.error = 'Invalid username';
             viewer.register(reply, viewParams);
+
         } else {
+
             bcrypt.hash(data.password, 10, (err, hash) => {
                 if(err) {
                     request.log.info(err);

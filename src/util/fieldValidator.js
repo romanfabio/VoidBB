@@ -1,4 +1,5 @@
 const validator = require('validator');
+const variable = require('./variableManager');
 
 module.exports = {
     isUsernameValid: (str) => {

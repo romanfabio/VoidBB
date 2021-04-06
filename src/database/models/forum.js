@@ -9,7 +9,7 @@ module.exports = async (sequelize) => {
             primaryKey: true
         },
         name: {
-            type: DataTypes.STRING(32),
+            type: DataTypes.STRING(64),
             allowNull: false
         },
         description: {
@@ -21,5 +21,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await Forum.sync();
+    await Forum.sync({force: true});
 }

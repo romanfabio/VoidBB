@@ -15,11 +15,16 @@ module.exports = {
         } catch(err) {
             console.log("Can't connect to database");
         }
-    
-        await UserModel(sequelize);
-        await ForumModel(sequelize);
-        await TopicModel(sequelize);
-        await PostModel(sequelize);
+
+        sequelize.authenticate()
+            .then(() => UserModel(sequelize))
+            .then(() => ForumModel(sequelize))
+            .then(() => TopicModel(sequelize))
+            .then(() => PostModel(sequelize))
+            .catch((err) => {
+                console.log('Can\'t initialize database\'s models');
+                console.log(err);
+            });
     },
     generateTransaction: () => {
         return sequelize.transaction();

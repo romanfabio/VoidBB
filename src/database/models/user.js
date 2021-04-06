@@ -15,10 +15,13 @@ module.exports = async (sequelize) => {
             type: DataTypes.STRING(128),
             allowNull: false
         },
-        permission: {
-            type: DataTypes.STRING(32),
+        global_group: {
+            type: DataTypes.INTEGER,
             allowNull: false,
-            defaultValue: '00000000000000000000000000000000'
+            references: {
+                model: sequelize.models.Global_Group,
+                key: 'id'
+            }
         }
     },
     {

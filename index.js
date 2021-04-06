@@ -8,6 +8,8 @@ const db = require('./src/database/db');
 db.init().then(() => {
     const variableManager = require('./src/util/variableManager');
     variableManager.reload();
+    const permissionManager = require('./src/util/permissionManager');
+    permissionManager.reload();
 });
 
 let app = fastify({logger: false});

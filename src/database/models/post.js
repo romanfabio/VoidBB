@@ -38,5 +38,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await Post.sync();
+    await Post.sync({force: true});
 }

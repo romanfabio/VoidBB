@@ -4,6 +4,7 @@ const TopicModel = require('./models/topic');
 const ForumModel = require('./models/forum');
 const PostModel = require('./models/post');
 const VariableModel = require('./models/variable');
+const GlobalGroupModel = require('./models/global_group');
 
 const sequelize = new Sequelize('postgres://voidbbuser:voidbbuser@localhost:5432/voidbb');
 
@@ -12,6 +13,7 @@ module.exports = {
 
         await sequelize.authenticate()
             .then(() => VariableModel(sequelize))
+            .then(() => GlobalGroupModel(sequelize))
             .then(() => UserModel(sequelize))
             .then(() => ForumModel(sequelize))
             .then(() => TopicModel(sequelize))
@@ -32,5 +34,7 @@ module.exports = {
 
     getForumModel: () => sequelize.models.Forum,
 
-    getPostModel: () => sequelize.models.Post
+    getPostModel: () => sequelize.models.Post,
+
+    getGlobalGroupModel: () => sequelize.models.Global_Group
 }   

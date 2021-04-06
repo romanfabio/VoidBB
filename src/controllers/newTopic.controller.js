@@ -1,6 +1,5 @@
 const db = require('../database/db');
 const validator = require('validator');
-const fieldValidator = require('../util/fieldValidator');
 const viewer = require('../util/viewer');
 
 module.exports = {

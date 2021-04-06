@@ -3,18 +3,26 @@ const bcrypt = require('bcrypt');
 const variableManager = require('../util/variableManager');
 const validator = require('validator');
 const viewer = require('../util/viewer');
+const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
         if(request.isAuth)
             reply.redirect('/');
-        else
+        else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) {
             viewer.register(reply, {});
+        } else {
+            viewer.home(reply, {error: 'You don\'t have the permission'});
+        }
     },
 
     post: (request, reply) => {
         if(request.isAuth) {
             reply.redirect('/');
+            return;
+        }
+        if(!pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) {
+            viewer.home(reply, {error: 'You don\'t have the permission'});
             return;
         }
 

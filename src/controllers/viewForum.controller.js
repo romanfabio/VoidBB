@@ -20,7 +20,7 @@ module.exports = {
 
                         PostModel.findAll({
                             where: {
-                                forum_id: {
+                                forum_name: {
                                     [Op.eq]: name
                                 }
                             }

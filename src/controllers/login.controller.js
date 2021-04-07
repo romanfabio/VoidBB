@@ -25,44 +25,39 @@ module.exports = {
         const data = request.body;
 
         // Rimuovi eventuali spazi 'bianchi'
-        data.username = validator.trim(data.username);
-        data.password = validator.trim(data.password);
+        data.username = data.username.trim();
+        data.password = data.password.trim();
 
         const UserModel = db.getUserModel();
 
-        UserModel.findAll({
-            attributes: ['password'],
-            where: {
-                username: {
-                    [Op.eq]: data.username
-                }
-            }
-        }).then((value) => {
-            if(value.length == 1) {
-                bcrypt.compare(data.password, value[0].password, (err, result) => {
-                    if(err) {
-                        request.log.info(err);
-                        viewParams.error = 'An error has occured, retry later';
-                        viewer.login(reply, viewParams);
-                    } else {
-                        if(result) {
-                            request.session.set('username', data.username);
-                            reply.redirect('/');
-                        } else {
-                            viewParams.error = 'Username and/or password invalid';
+        UserModel.findByPk(data.username, {attributes: ['password']})
+            .then((user) => {
+                if(user === null) {
+                    viewParams.error = 'Username and/or password invalid';
+                    viewer.login(reply, viewParams);
+                } else {
+
+                    bcrypt.compare(data.password, user.password, (err, result) => {
+                        if(err) {
+                            request.log.info(err);
+                            viewParams.error = 'An error has occured, retry later';
                             viewer.login(reply, viewParams);
+                        } else {
+                            if(result) {
+                                request.session.set('username', data.username);
+                                reply.redirect('/');
+                            } else {
+                                viewParams.error = 'Username and/or password invalid';
+                                viewer.login(reply, viewParams);
+                            }
                         }
-                    }
-                });
-            } else {
-                viewParams.error = 'Username and/or password invalid';
+                    });
+                }
+            }, (err) => {
+                console.log(err);
+                viewParams.error = 'An error has occured, retry later';
                 viewer.login(reply, viewParams);
-            }
-        }, (err) => {
-            request.log.info(err);
-            viewParams.error = 'An error has occured, retry later';
-            viewer.login(reply, viewParams);
-        });
+            });
         
     }
 }

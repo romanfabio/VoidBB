@@ -8,13 +8,17 @@ module.exports = async (sequelize) => {
             autoIncrement: true,
             primaryKey: true
         },
-        forum_id: {
+        forum_name: {
             type: DataTypes.STRING(64),
             allowNull: false,
             references: {
                 model: sequelize.models.Forum,
                 key: 'name'
             }
+        },
+        title: {
+            type: DataTypes.STRING(255),
+            allowNull: false
         },
         description: {
             type: DataTypes.TEXT,
@@ -38,5 +42,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await Post.sync({force: true});
+    await Post.sync();
 }

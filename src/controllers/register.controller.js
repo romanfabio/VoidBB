@@ -71,7 +71,6 @@ module.exports = {
                     const UserModel = db.getUserModel();
 
                     UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.defaultGlobalGroup.Registered_User}).then((value) => {
-                        console.log(value);
                         request.session.set('username', data.username);
                         reply.redirect('/');
                     }, (err) => {

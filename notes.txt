@@ -1,0 +1,3 @@
+Valid Forum Name =>         /^[\x00-\x7F]+$/
+    ASCII Only
+    [A-Z] [a-z] [0-9] - _ 

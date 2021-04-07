@@ -1,9 +1,17 @@
 const pex = require('../../util/permissionManager');
 const db = require('../../database/db');
 
+/*
+    Authenticated User
+        - request.is_auth : string = <user's username>
+        - request.user_global_group : number = <user's global group id>
+    Non-Authenticated User
+        - request.user_global_group : number = <Anonymous global group id>
+*/
 module.exports = (request, reply, done) => {
-    const username = request.session.get('username');
+    console.log('GetMe Hook');
 
+    const username = request.session.get('username');
     if(username) {
 
         const UserModel = db.getUserModel();
@@ -12,11 +20,13 @@ module.exports = (request, reply, done) => {
             .then((user) => {
                 if(user === null) {
                     request.user_global_group = pex.defaultGlobalGroup.Anonymous;
+                    request.session.delete();
+                    done();
                 } else {
+                    request.is_auth = username;
                     request.user_global_group = user.global_group;
-                    request.user_username = username;
+                    done();
                 }
-                done();
             }, (err) => {
                 console.log(err);
                 request.user_global_group = pex.defaultGlobalGroup.Anonymous;

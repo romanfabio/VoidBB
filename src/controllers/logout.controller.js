@@ -1,6 +1,6 @@
 module.exports = {
     get: (request, reply) => {
-        if(request.isAuth)
+        if(request.is_auth)
             request.session.delete();
         reply.redirect('/');
     }

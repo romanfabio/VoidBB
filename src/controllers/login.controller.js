@@ -6,13 +6,15 @@ const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.is_auth)
+        if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else
             viewer.login(reply, {});
     },
 
     post: (request, reply) => {
+
+        // L'utente autenticato non ha bisogno di autenticarsi di nuovo
         if(request.is_auth) {
             reply.redirect('/');
             return;
@@ -21,6 +23,8 @@ module.exports = {
         const viewParams = {};
 
         const data = request.body;
+
+        // Rimuovi eventuali spazi 'bianchi'
         data.username = validator.trim(data.username);
         data.password = validator.trim(data.password);
 

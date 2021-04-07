@@ -4,8 +4,8 @@ const viewer = require('../util/viewer');
 module.exports = {
     get: (request, reply) => {
         const viewParams = {};
-        if(request.isAuth)
-            viewParams.auth = request.authUsername;
+        if(request.is_auth)
+            viewParams.user_username = request.is_auth;
 
         const forumModel = db.getForumModel();
 

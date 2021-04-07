@@ -10,11 +10,19 @@ module.exports = async (sequelize) => {
         description: {
             type: DataTypes.STRING(255),
             allowNull: false
+        },
+        creator: {
+            type: DataTypes.STRING(32),
+            allowNull: false,
+            references: {
+                model: sequelize.models.User,
+                key: 'username'
+            }
         }
     },
     {
         timestamps: false
     });
 
-    await Forum.sync({force: true});
+    await Forum.sync();
 }

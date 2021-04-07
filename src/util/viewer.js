@@ -16,6 +16,9 @@ module.exports = {
     },
     newForum: (reply, extra) => {
         reply.view('newForum.ejs', {title: 'New Forum', ...extra});
+    },
+    deadend: (reply, extra) => { // extra must have property 'back'
+        reply.view('deadend.ejs', {title: 'End', ...extra});
     }
     
 }

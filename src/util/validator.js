@@ -25,3 +25,6 @@ module.exports = {
             str.length <= variable.get('FORUM_DESCRIPTION_MAX_LENGTH');
     }
 };
+
+//TODO
+//Cambia l'ordine di valutazione delle condizioni (motivo: inutile controllare regex costosa se lunghezza non è conforme)

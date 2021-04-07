@@ -1,13 +1,19 @@
 const viewForumController = require('../controllers/viewForum.controller');
 const newForumController = require('../controllers/newForum.controller');
+const getMeHook = require('./hooks/getMeHook');
 
 module.exports = (app) => {
+
     app.route({
         method: 'GET',
-        url: '/forum/:id',
+        url: '/f/:name',
         schema: {
             params: {
-                id: {type: 'integer'}
+                type: "object",
+                properties: {
+                    name: {type: "string"}
+                },
+                required: ['name']
             }
         },
         handler: viewForumController.get
@@ -15,13 +21,14 @@ module.exports = (app) => {
 
     app.route({
         method: 'GET',
-        url: '/newforum',
-        handler: newForumController.get
+        url: '/f',
+        handler: newForumController.get,
+        onRequest: getMeHook
     });
 
     app.route({
         method: 'POST',
-        url: '/newforum',
+        url: '/f',
         schema: {
             body: {
                 type: "object",
@@ -32,6 +39,7 @@ module.exports = (app) => {
                 required: ['name','description']
             }
         },
-        handler: newForumController.post
+        handler: newForumController.post,
+        onRequest: getMeHook
     });
 };

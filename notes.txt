@@ -1,3 +1,3 @@
-Valid Forum Name =>         /^[\x00-\x7F]+$/
+Valid Forum Name =>         /^[\x2D\x30-\x39\x41-\x5A\x5F\x61-\x7A]+$/
     ASCII Only
     [A-Z] [a-z] [0-9] - _ 

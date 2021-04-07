@@ -9,6 +9,8 @@ module.exports = {
         globalGroupModel.findAll().then((value) => {
             globalGroupMasks.clear();
             for(let i = 0; i < value.length; i++) {
+                console.log(value[i].id + " " + value[i].name + " " + value[i].mask);
+
                 globalGroupMasks.set(value[i].id, value[i].mask);
             }
         }, (err) => {
@@ -26,6 +28,8 @@ module.exports = {
 
     globalBit: {
         REGISTER: 0,
+        CREATE_FORUM: 1,
+        DELETE_FORUM: 2
     },
 
     globalExists: (group_id) => globalGroupMasks.has(group_id),

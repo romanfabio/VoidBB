@@ -6,14 +6,14 @@ const viewer = require('../util/viewer');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.isAuth)
+        if(request.is_auth)
             reply.redirect('/');
         else
             viewer.login(reply, {});
     },
 
     post: (request, reply) => {
-        if(request.isAuth) {
+        if(request.is_auth) {
             reply.redirect('/');
             return;
         }

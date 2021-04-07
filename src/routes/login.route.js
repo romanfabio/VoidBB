@@ -1,10 +1,12 @@
 const loginController = require('../controllers/login.controller');
+const isAuthHook = require('./hooks/isAuthHook');
 
 module.exports = (app) => {
     app.route({
         method: 'GET',
         url: '/login',
-        handler: loginController.get
+        handler: loginController.get,
+        onRequest: isAuthHook
     });
 
     app.route({
@@ -20,6 +22,7 @@ module.exports = (app) => {
                 required: ['username','password']
             }
         },
-        handler: loginController.post
+        handler: loginController.post,
+        onRequest: isAuthHook
     });
 };

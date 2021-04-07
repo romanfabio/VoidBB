@@ -4,12 +4,13 @@ const path = require('path');
 const routes = require('./src/routes/routes');
 const port = process.env.PORT || 3000;
 const db = require('./src/database/db');
+const pex = require('./src/util/permissionManager');
+const viewer = require('./src/util/viewer');
 
 db.init().then(() => {
     const variableManager = require('./src/util/variableManager');
     variableManager.reload();
-    const permissionManager = require('./src/util/permissionManager');
-    permissionManager.reload();
+    pex.reload();
 });
 
 let app = fastify({logger: false});
@@ -39,17 +40,6 @@ app.register(require('point-of-view'), {
     layout: 'layouts/default.ejs'
 });
 
-
-app.addHook('onRequest', (request, reply, done) => {
-    const auth = request.session.get('username');
-    if(auth) {
-        request.isAuth = true;
-        request.authUsername = auth;
-    } else {
-        request.isAuth = false;
-    }
-    done();
-});
 
 routes(app);
 

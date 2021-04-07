@@ -7,7 +7,7 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.isAuth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
+        if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
             viewer.register(reply, {});
@@ -19,7 +19,7 @@ module.exports = {
     post: (request, reply) => {
 
         // L'utente autenticato non ha bisogno di autenticarsi di nuovo
-        if(request.isAuth) {
+        if(request.is_auth) {
             reply.redirect('/');
             return;
         }
@@ -70,7 +70,8 @@ module.exports = {
             
                     const UserModel = db.getUserModel();
 
-                    UserModel.create({username: data.username, password: hash, email: data.email}).then((value) => {
+                    UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.defaultGlobalGroup.Registered_User}).then((value) => {
+                        console.log(value);
                         request.session.set('username', data.username);
                         reply.redirect('/');
                     }, (err) => {

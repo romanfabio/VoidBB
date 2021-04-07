@@ -6,6 +6,8 @@ module.exports = {
     get: (request, reply) => {
         const viewParams = {};
 
+
+
         if(request.isAuth) {
             viewParams.auth = request.authUsername;
             viewer.newForum(reply, viewParams);

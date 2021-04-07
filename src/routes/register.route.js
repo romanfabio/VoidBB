@@ -1,10 +1,12 @@
 const registerController = require('../controllers/register.controller');
+const isAuthHook = require('./hooks/isAuthHook');
 
 module.exports = (app) => {
     app.route({
         method: 'GET',
         url: '/register',
-        handler: registerController.get
+        handler: registerController.get,
+        onRequest: isAuthHook
     });
 
     app.route({
@@ -21,6 +23,7 @@ module.exports = (app) => {
                 required: ['username','email','password']
             }
         },
-        handler: registerController.post
+        handler: registerController.post,
+        onRequest: isAuthHook
     });
 };

@@ -1,3 +1,53 @@
 Valid Forum Name =>         /^[\x2D\x30-\x39\x41-\x5A\x5F\x61-\x7A]+$/
     ASCII Only
     [A-Z] [a-z] [0-9] - _ 
+
+
+1 Forum --> N Group
+
+1 Forum --> N User
+
+Forum
+| name |
+
+User
+| username |
+
+ForumGroup
+id  |forum_name |name   |mask   primary(id) / unique(forum_name, name)
+
+0   | anarchy   |admin  |0000
+1   | anarchy   |mod    |10101
+2   | kitty     |admin  |101010
+3   | kitty     |usr    |00000
+4   | anarchy   |usr    |00000
+
+ForumUser
+username    |group_id   | primary(username,group_id)
+mrvoid      | 0         |
+mrvoid      | 3         |
+pippo       | 2         |
+pippo       | 0         |
+
+mrvoid      | 1         |
+
+Relation
+username    |group_id   |forum_name |name   |mask
+mrvoid      | 0         | anarchy   | admin | 0000
+mrvoid      | 3         | kitty     | usr   | 00000
+pippo       | 2         | kitty     | admin | 101010
+pippo       | 0         | anarchy   | admin | 0000
+
+mrvoid      | 1         | anarchy   | mod   | 10101
+
+
+SELECT ForumGroup.mask
+  FROM ForumUser 
+  INNER JOIN ForumGroup
+    ON ForumGroup.id = ForumUser.group_id
+
+    WHERE
+        ForumUser.username = 'mrvoid' AND
+        ForumGroup.forum_name = 'anarchy';
+
+SELECT mask FROM ForumUser INNER JOIN ForumGroup ON forum_id = forum_id WHERE forum_id = 1 AND user_id = 1;

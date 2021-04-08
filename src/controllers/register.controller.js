@@ -10,9 +10,9 @@ module.exports = {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
-            viewer.register(reply, {});
+            reply.view('register.ejs');
         } else {
-            viewer.home(reply, {error: 'You don\'t have the permission'});
+            reply.redirect('/');
         }
     },
 
@@ -26,11 +26,9 @@ module.exports = {
 
         // Controlla se il gruppo Anonymous ha il permesso di registrarsi
         if(!pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) {
-            viewer.home(reply, {error: 'You don\'t have the permission'});
+            reply.redirect('/');
             return;
         }
-
-        const viewParams = {};
 
         const data = request.body;
         
@@ -45,9 +43,8 @@ module.exports = {
 
                     bcrypt.hash(data.password, 10, (err, hash) => {
                         if(err) {
-                            request.log.info(err);
-                            viewParams.error = 'An error has occured, retry later';
-                            viewer.register(reply, viewParams);
+                            console.log(err);
+                            reply.view('register.ejs', {error: 'An error has occured, retry later'});
                         } else {
                     
                             const UserModel = db.getUserModel();
@@ -56,24 +53,20 @@ module.exports = {
                                 request.session.set('username', data.username);
                                 reply.redirect('/');
                             }, (err) => {
-                                request.log.info(err);
-                                viewParams.error = 'An error has occured, retry later';
-                                viewer.register(reply, viewParams);
+                                console.log(err);
+                                reply.view('register.ejs', {error: 'An error has occured, retry later'});
                             });
                         }
                     });
 
                 } else {
-                    viewParams.error = 'Invalid username';
-                    viewer.register(reply, viewParams);
+                    reply.view('register.ejs', {error: 'Invalid Username'});
                 }
             } else {
-                viewParams.error = 'Invalid password';
-                viewer.register(reply, viewParams);            
+                reply.view('register.ejs', {error: 'Invalid Password'});          
             }
         } else {
-            viewParams.error = 'Invalid email';
-            viewer.register(reply, viewParams);
+            reply.view('register.ejs', {error: 'Invalid Email'});
         }
 
     }

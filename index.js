@@ -37,7 +37,10 @@ app.register(require('point-of-view'), {
         ejs: require('ejs')
     },
     root: path.join(__dirname, 'src/views'),
-    layout: 'layouts/default.ejs'
+    layout: 'layouts/default.ejs',
+    defaultContext: {
+        TITLE: 'Cipolla Spawn'
+    }
 });
 
 

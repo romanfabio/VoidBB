@@ -1,6 +1,5 @@
 const { Sequelize } = require('sequelize');
 const UserModel = require('./models/user');
-const TopicModel = require('./models/topic');
 const ForumModel = require('./models/forum');
 const PostModel = require('./models/post');
 const VariableModel = require('./models/variable');
@@ -20,7 +19,6 @@ module.exports = {
             .then(() => ForumModel(sequelize))
             .then(() => ForumGroupModel(sequelize))
             .then(() => ForumUserModel(sequelize))
-            .then(() => TopicModel(sequelize))
             .then(() => PostModel(sequelize))
             .catch((err) => {
                 console.log('Can\'t initialize database\'s models');
@@ -33,8 +31,6 @@ module.exports = {
     getVariableModel: () => sequelize.models.Variable,
 
     getUserModel: () => sequelize.models.User,
-
-    getTopicModel: () => sequelize.models.Topic,
 
     getForumModel: () => sequelize.models.Forum,
 

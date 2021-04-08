@@ -1,4 +1,3 @@
-//const viewer = require('../util/viewer');
 const db = require('../database/db');
 const validator = require('../util/validator');
 const pex = require('../util/permissionManager');
@@ -11,8 +10,12 @@ module.exports = {
 
             if(request.is_auth)
                 viewParams.user_username = request.is_auth;
+            else {
+                if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
+                    viewParams.can_register = true;
+            }
 
-            viewer.newForum(reply, viewParams);
+            reply.view('newForum.ejs', viewParams);
         }
         else {
             reply.redirect('/');
@@ -30,6 +33,10 @@ module.exports = {
 
         if(request.is_auth)
             viewParams.user_username = request.is_auth;
+        else {
+            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
+                viewParams.can_register = true;
+        }
 
 
         const data = request.body;
@@ -74,15 +81,15 @@ module.exports = {
                             viewParams.error = 'A forum with that name already exists';
                         else
                             viewParams.error = 'An error has occured, retry later';
-                        viewer.newForum(reply, viewParams);
+                        reply.view('newForum.ejs', viewParams);
                     });
             } else {
-                viewParams.error = 'Invalid description';
-                viewer.newForum(reply, viewParams);
+                viewParams.error = 'Invalid Description';
+                reply.view('newForum.ejs', viewParams);
             }
         } else {
-            viewParams.error = 'Invalid name';
-            viewer.newForum(reply, viewParams);
+            viewParams.error = 'Invalid Name';
+            reply.view('newForum.ejs', viewParams);
         }
     }
 };

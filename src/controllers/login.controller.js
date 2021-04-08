@@ -9,7 +9,7 @@ module.exports = {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else
-            viewer.login(reply, {});
+            reply.view('login.ejs');
     },
 
     post: (request, reply) => {
@@ -33,30 +33,26 @@ module.exports = {
         UserModel.findByPk(data.username, {attributes: ['password']})
             .then((user) => {
                 if(user === null) {
-                    viewParams.error = 'Username and/or password invalid';
-                    viewer.login(reply, viewParams);
+                    reply.view('login.ejs', {error: 'Username and/or password invalid'});
                 } else {
 
                     bcrypt.compare(data.password, user.password, (err, result) => {
                         if(err) {
-                            request.log.info(err);
-                            viewParams.error = 'An error has occured, retry later';
-                            viewer.login(reply, viewParams);
+                            console.log(err);
+                            reply.view('login.ejs', {error: 'An error has occured, retry later'});
                         } else {
                             if(result) {
                                 request.session.set('username', data.username);
                                 reply.redirect('/');
                             } else {
-                                viewParams.error = 'Username and/or password invalid';
-                                viewer.login(reply, viewParams);
+                                reply.view('login.ejs', {error: 'Username and/or password invalid'});
                             }
                         }
                     });
                 }
             }, (err) => {
                 console.log(err);
-                viewParams.error = 'An error has occured, retry later';
-                viewer.login(reply, viewParams);
+                reply.view('login.ejs', {error: 'An error has occured, retry later'});
             });
         
     }

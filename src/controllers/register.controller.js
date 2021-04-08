@@ -1,8 +1,6 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
-const variableManager = require('../util/variableManager');
 const validator = require('../util/validator');
-const viewer = require('../util/viewer');
 const pex = require('../util/permissionManager');
 
 module.exports = {

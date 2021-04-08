@@ -1,4 +1,4 @@
-const viewer = require('../util/viewer');
+//const viewer = require('../util/viewer');
 const db = require('../database/db');
 const validator = require('../util/validator');
 const pex = require('../util/permissionManager');

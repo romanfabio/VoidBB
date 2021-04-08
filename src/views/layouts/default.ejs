@@ -21,7 +21,9 @@
             <ul id="menu">
                 <li class="menu-item left"><a href="/">Home</a></li>
                 <% if(!locals.user_username) { %>
+                <% if(locals.can_register) { %>
                 <li class="menu-item right"><a href="/register">Register</a></li>
+                <% } %>
                 <li class="menu-item right"><a href="/login">Login</a></li>
                 <% } else { %>
                     <li class="menu-item left"><a href="/newtopic">New Topic</a></li>

@@ -1,15 +1,17 @@
 const db = require('../database/db');
 const bcrypt = require('bcrypt');
-const validator = require('validator');
-const { Op } = require('sequelize');
-const viewer = require('../util/viewer');
+const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
-        else
-            reply.view('login.ejs');
+        else {
+            if(pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER))
+                reply.view('login.ejs', {can_register: true});
+            else
+                reply.view('login.ejs');
+        }
     },
 
     post: (request, reply) => {
@@ -22,6 +24,9 @@ module.exports = {
 
         const viewParams = {};
 
+        if(pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER))
+            viewParams.can_register = true;
+
         const data = request.body;
 
         // Rimuovi eventuali spazi 'bianchi'
@@ -33,26 +38,30 @@ module.exports = {
         UserModel.findByPk(data.username, {attributes: ['password']})
             .then((user) => {
                 if(user === null) {
-                    reply.view('login.ejs', {error: 'Username and/or password invalid'});
+                    viewParams.error = 'Username and/or password invalid';
+                    reply.view('login.ejs', viewParams);
                 } else {
 
                     bcrypt.compare(data.password, user.password, (err, result) => {
                         if(err) {
                             console.log(err);
-                            reply.view('login.ejs', {error: 'An error has occured, retry later'});
+                            viewParams.error = 'An error has occured, retry later';
+                            reply.view('login.ejs', viewParams);
                         } else {
                             if(result) {
                                 request.session.set('username', data.username);
                                 reply.redirect('/');
                             } else {
-                                reply.view('login.ejs', {error: 'Username and/or password invalid'});
+                                viewParams.error = 'Username and/or password invalid';
+                                reply.view('login.ejs', viewParams);
                             }
                         }
                     });
                 }
             }, (err) => {
                 console.log(err);
-                reply.view('login.ejs', {error: 'An error has occured, retry later'});
+                viewParams.error = 'An error has occured, retry later';
+                reply.view('login.ejs', viewParams);
             });
         
     }

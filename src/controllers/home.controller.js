@@ -8,6 +8,10 @@ module.exports = {
 
         if(request.is_auth)
             viewParams.user_username = request.is_auth;
+        else {
+            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
+                viewParams.can_register = true;
+        }
 
         if(pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM))
             viewParams.can_create_forum = true;

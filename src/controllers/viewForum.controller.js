@@ -1,5 +1,5 @@
 const db = require('../database/db');
-const viewer = require('../util/viewer');
+//const viewer = require('../util/viewer');
 const { Op } = require("sequelize");
 
 module.exports = {

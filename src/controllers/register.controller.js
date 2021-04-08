@@ -8,7 +8,7 @@ module.exports = {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
-            reply.view('register.ejs');
+            reply.view('register.ejs', {can_register: true});
         } else {
             reply.redirect('/');
         }
@@ -42,7 +42,7 @@ module.exports = {
                     bcrypt.hash(data.password, 10, (err, hash) => {
                         if(err) {
                             console.log(err);
-                            reply.view('register.ejs', {error: 'An error has occured, retry later'});
+                            reply.view('register.ejs', {can_register: true, error: 'An error has occured, retry later'});
                         } else {
                     
                             const UserModel = db.getUserModel();
@@ -52,19 +52,19 @@ module.exports = {
                                 reply.redirect('/');
                             }, (err) => {
                                 console.log(err);
-                                reply.view('register.ejs', {error: 'An error has occured, retry later'});
+                                reply.view('register.ejs', {can_register: true, error: 'An error has occured, retry later'});
                             });
                         }
                     });
 
                 } else {
-                    reply.view('register.ejs', {error: 'Invalid Username'});
+                    reply.view('register.ejs', {can_register: true, error: 'Invalid Username'});
                 }
             } else {
-                reply.view('register.ejs', {error: 'Invalid Password'});          
+                reply.view('register.ejs', {can_register: true, error: 'Invalid Password'});          
             }
         } else {
-            reply.view('register.ejs', {error: 'Invalid Email'});
+            reply.view('register.ejs', {can_register: true, error: 'Invalid Email'});
         }
 
     }

@@ -3,21 +3,6 @@ const getMeHook = require('./hooks/getMeHook');
 
 module.exports = (app) => {
 
-  /*   app.route({
-        method: 'GET',
-        url: '/f/:name',
-        schema: {
-            params: {
-                type: "object",
-                properties: {
-                    name: {type: "string"}
-                },
-                required: ['name']
-            }
-        },
-        handler: viewForumController.get
-    }); */
-
     app.route({
         method: 'GET',
         url: '/p',
@@ -30,7 +15,8 @@ module.exports = (app) => {
                 required: ['f']
             }
         },
-        handler: newPostController.get
+        handler: newPostController.get,
+        onRequest: getMeHook
     });
 
   /*   app.route({

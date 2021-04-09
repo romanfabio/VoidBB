@@ -8,13 +8,16 @@ module.exports = {
 
         if(name.length > 0) { // if url ends with /f/ , name is an invalid empty string, so redirect user to home
 
+            const viewParams = {};
+
+            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
+                viewParams.can_register = true;
+            }
+
             if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_FORUM)) {
 
-                const viewParams = {back: '/f/' + name, ERROR: 'You must be logged to do that'};
-
-                if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                    viewParams.can_register = true;
-                }
+                viewParams.back = '/f/' + name;
+                viewParams.ERROR = 'You must be logged to do that';
 
                 reply.view('login.ejs', viewParams);
                 return;
@@ -39,7 +42,8 @@ module.exports = {
                             }
                         }).then((posts) => {
 
-                            const viewParams = {forum_name: name, posts: posts};
+                            viewParams.forum_name = name;
+                            viewParams.posts = posts;
 
                             if(request.is_auth) {
 

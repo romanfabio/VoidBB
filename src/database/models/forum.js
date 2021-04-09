@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 module.exports = async (sequelize) => {
     const Forum = sequelize.define('Forum', {
         name: {
-            type: DataTypes.STRING(64),
+            type: DataTypes.STRING(32),
             allowNull: false,
             primaryKey: true
         },
@@ -18,6 +18,14 @@ module.exports = async (sequelize) => {
                 model: sequelize.models.User,
                 key: 'username'
             }
+        },
+        user_mask: {
+            type: DataTypes.STRING(255),
+            allowNull: false
+        },
+        moderator_mask: {
+            type: DataTypes.STRING(255),
+            allowNull: false
         }
     },
     {

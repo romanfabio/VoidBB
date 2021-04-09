@@ -1,9 +1,9 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = async (sequelize) => {
-    const ForumUser = sequelize.define('Forum_User', {
+    const ForumModerator = sequelize.define('ForumModerator', {
         username: { 
-            type: DataTypes.STRING(64),
+            type: DataTypes.STRING(32),
             allowNull: false,
             primaryKey: true,
             references: {
@@ -11,13 +11,13 @@ module.exports = async (sequelize) => {
                 key: 'username'
             }
         },
-        group_id: {
-            type: DataTypes.INTEGER,
+        forum_name: {
+            type: DataTypes.STRING(32),
             allowNull: false,
             primaryKey: true,
             references: {
-                model: sequelize.models.Forum_Group,
-                key: 'id'
+                model: sequelize.models.Forum,
+                key: 'name'
             }
         }
     },
@@ -25,5 +25,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await ForumUser.sync();
+    await ForumModerator.sync();
 }

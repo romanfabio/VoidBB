@@ -51,3 +51,86 @@ SELECT ForumGroup.mask
         ForumGroup.forum_name = 'anarchy';
 
 SELECT mask FROM ForumUser INNER JOIN ForumGroup ON forum_id = forum_id WHERE forum_id = 1 AND user_id = 1;
+
+
+
+
+FORUM PERMISSION
+
+USER
+    CREATE_POST
+    DELETE_OWN_POST
+MODERATOR
+    DELETE_POST
+ADMIN
+    DELETE_FORUM
+
+
+USER
+    MUST:       0000000
+    DEFAULT:    1100000
+MODERATOR:
+    MUST:       1100000
+    DEFAULT:    1110000
+ADMIN:
+    MUST:       1111111
+    DEFAULT:    1111111
+
+
+
+             key              |     value     | isInt 
+------------------------------+---------------+-------
+ FORUM_NAME                   | Cipolla Spawn | f
+ FOUNDER_NAME                 | mrvoid        | f
+ FOUNDER_EMAIL                |               | f
+ PASSWORD_MIN_LENGTH          | 8             | t
+ PASSWORD_MAX_LENGTH          | 64            | t
+ USERNAME_MAX_LENGTH          | 64            | t
+ USERNAME_MIN_LENGTH          | 4             | t
+ FORUM_NAME_MAX_LENGTH        | 64            | t
+ FORUM_DESCRIPTION_MAX_LENGTH | 255           | t
+ POST_TITLE_MAX_LENGTH        | 255           | t
+
+
+
+
+
+
+
+x-x GENERAL PERMISSION x-x
+
+.   => OPTIONAL
+-   => REQUIRED
+x   => NEGATED
+tab => CONSIDERED IF PARENT IS SET
+
+
+ANONYMOUS
+    . REGISTER
+    x   CREATE_FORUM
+    . VIEW_FORUM
+    x
+    x
+    x
+
+USER
+    - REGISTER
+    .   CREATE_FORUM
+    - VIEW_FORUM
+
+
+x-x FORUM PERMISSION x-x
+
+.   => OPTIONAL
+-   => REQUIRED
+x   => NEGATED
+tab => CONSIDERED IF PARENT IS SET
+
+
+USER
+    . ANONYMOUS_POST
+    . CREATE_POST
+    . DELETE_OWN_POST
+
+MODERATOR
+    

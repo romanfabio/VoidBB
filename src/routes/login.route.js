@@ -17,7 +17,8 @@ module.exports = (app) => {
                 type: "object",
                 properties: {
                     username: {type: 'string', nullable: false},
-                    password: {type: 'string', nullable: false}
+                    password: {type: 'string', nullable: false},
+                    back: {type: 'string', nullable: false}
                 },
                 required: ['username','password']
             }

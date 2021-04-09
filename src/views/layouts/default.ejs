@@ -20,7 +20,7 @@
         <nav>
             <ul id="menu">
                 <li class="menu-item left"><a href="/">Home</a></li>
-                <% if(!locals.user_username) { %>
+                <% if(!locals.USERNAME) { %>
                 <% if(locals.can_register) { %>
                 <li class="menu-item right"><a href="/register">Register</a></li>
                 <% } %>
@@ -28,14 +28,14 @@
                 <% } else { %>
                     <li class="menu-item left"><a href="/newtopic">New Topic</a></li>
                 <li class="menu-item right"><a href="/logout">Logout</a></li>
-                <li class="menu-item right">Hello, <%= user_username %></li>
+                <li class="menu-item right">Hello, <%= USERNAME %></li>
                 <% } %>
             </ul>
         </nav>
         <main>
-            <% if( locals.error ) { %>
+            <% if( locals.ERROR ) { %>
             <div id="error-div">
-                <h5 id="error"><%= error %></h5>
+                <h5 id="error"><%= ERROR %></h5>
             </div>
             <% } %>
             <%- body %>

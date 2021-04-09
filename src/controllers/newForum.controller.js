@@ -5,17 +5,10 @@ const {UniqueConstraintError} = require('sequelize');
 
 module.exports = {
     get: (request, reply) => {
-        if(pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM)) {
-            const viewParams = {};
+        if(pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM)) { //If CREATE_FORUM is set then REGISTER must be set
 
-            if(request.is_auth)
-                viewParams.user_username = request.is_auth;
-            else {
-                if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
-                    viewParams.can_register = true;
-            }
-
-            reply.view('newForum.ejs', viewParams);
+            // User must be registered, request.is_auth is always valid
+            reply.view('newForum.ejs', {USERNAME: request.is_auth});
         }
         else {
             reply.redirect('/');
@@ -29,14 +22,8 @@ module.exports = {
             return;
         }
 
-        const viewParams = {};
-
-        if(request.is_auth)
-            viewParams.user_username = request.is_auth;
-        else {
-            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
-                viewParams.can_register = true;
-        }
+        // User must be registered, request.is_auth is always valid
+        const viewParams = {USERNAME: request.is_auth};
 
 
         const data = request.body;
@@ -45,50 +32,26 @@ module.exports = {
 
         if(validator.isForumName(data.name)) {
             if(validator.isForumDescription(data.description)) {
-                //I forum non possono contenere lettere maiuscole
+                //Forums can't contain uppercase letter
                 data.name = data.name.toLowerCase();
 
                 const ForumModel = db.getForumModel();
-                const ForumGroupModel = db.getForumGroupModel();
-                const ForumUserModel = db.getForumUserModel();
-                let transaction = null;
 
-                db.generateTransaction()
-                    .then((value) => {
-                        transaction = value;
-                        return ForumModel.create({name: data.name, description: data.description, creator: request.is_auth}, {transaction});
-                    })
-                    .then(() => {
-                        return ForumGroupModel.bulkCreate([
-                            {forum_name: data.name, name: 'admin', mask: '0000'},
-                            {forum_name: data.name, name: 'moderator', mask: '0000'},
-                            {forum_name: data.name, name: 'guest', mask: '0000'}
-                        ], {transaction});
-                    })
-                    .then((groups) => {
-                        return ForumUserModel.create({username: request.is_auth, group_id: groups[0].id}, {transaction});
-                    })
-                    .then(() => {
-                        return transaction.commit();
-                    })
+                ForumModel.create({name: data.name, description: data.description, creator: request.is_auth, user_mask: '0000000', moderator_mask: '00000000'})
                     .then(() => {
                         reply.redirect('/f/' + data.name);
-                    })
-                    .catch((err) => {
-                        transaction.rollback();
+                    }, (err) => {
                         console.log(err);
-                        if(err instanceof UniqueConstraintError)
-                            viewParams.error = 'A forum with that name already exists';
-                        else
-                            viewParams.error = 'An error has occured, retry later';
+                        viewParams.ERROR = 'An error has occured, retry later';
                         reply.view('newForum.ejs', viewParams);
                     });
+                    
             } else {
-                viewParams.error = 'Invalid Description';
+                viewParams.ERROR = 'Invalid Description';
                 reply.view('newForum.ejs', viewParams);
             }
         } else {
-            viewParams.error = 'Invalid Name';
+            viewParams.ERROR = 'Invalid Name';
             reply.view('newForum.ejs', viewParams);
         }
     }

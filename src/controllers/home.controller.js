@@ -7,7 +7,7 @@ module.exports = {
         const viewParams = {};
 
         if(request.is_auth)
-            viewParams.user_username = request.is_auth;
+            viewParams.USERNAME = request.is_auth;
         else {
             if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
                 viewParams.can_register = true;
@@ -24,8 +24,8 @@ module.exports = {
             reply.view('home.ejs', viewParams);
             
         }, (err) => {
-            viewParams.error = 'An error has occured, retry later';
-            viewer.home(reply, viewParams);
+            viewParams.ERROR = 'An error has occured, retry later';
+            reply.view('home.ejs', viewParams);
         });
     }
 }

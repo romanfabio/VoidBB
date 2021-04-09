@@ -19,7 +19,7 @@ module.exports = (request, reply, done) => {
         UserModel.findByPk(username, {attributes: ['global_group']})
             .then((user) => {
                 if(user === null) {
-                    request.user_global_group = pex.defaultGlobalGroup.Anonymous;
+                    request.user_global_group = pex.GLOBAL_ANONYMOUS;
                     request.session.delete();
                     done();
                 } else {
@@ -29,11 +29,11 @@ module.exports = (request, reply, done) => {
                 }
             }, (err) => {
                 console.log(err);
-                request.user_global_group = pex.defaultGlobalGroup.Anonymous;
+                request.user_global_group = pex.GLOBAL_ANONYMOUS;
                 done();
             });
     } else {
-        request.user_global_group = pex.defaultGlobalGroup.Anonymous;
+        request.user_global_group = pex.GLOBAL_ANONYMOUS;
         done();
     }
 }

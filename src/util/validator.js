@@ -23,6 +23,10 @@ module.exports = {
     isForumDescription: (str) => {
         return str.length > 0 &&
             str.length <= variable.get('FORUM_DESCRIPTION_MAX_LENGTH');
+    },
+    isPostTitle: (str) => {
+        return str.length > 0 &&
+            str.length <= variable.get('POST_TITLE_MAX_LENGTH');
     }
 };
 

@@ -7,7 +7,7 @@ module.exports = {
     get: (request, reply) => {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
-        else if (pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
+        else if (pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
             reply.view('register.ejs', {can_register: true});
         } else {
             reply.redirect('/');
@@ -23,7 +23,7 @@ module.exports = {
         }
 
         // Controlla se il gruppo Anonymous ha il permesso di registrarsi
-        if(!pex.isGlobalSet(pex.defaultGlobalGroup.Anonymous, pex.globalBit.REGISTER)) {
+        if(!pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) {
             reply.redirect('/');
             return;
         }
@@ -42,29 +42,29 @@ module.exports = {
                     bcrypt.hash(data.password, 10, (err, hash) => {
                         if(err) {
                             console.log(err);
-                            reply.view('register.ejs', {can_register: true, error: 'An error has occured, retry later'});
+                            reply.view('register.ejs', {can_register: true, ERROR: 'An error has occured, retry later'});
                         } else {
                     
                             const UserModel = db.getUserModel();
         
-                            UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.defaultGlobalGroup.Registered_User}).then((value) => {
+                            UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.GLOBAL_USER}).then((value) => {
                                 request.session.set('username', data.username);
                                 reply.redirect('/');
                             }, (err) => {
                                 console.log(err);
-                                reply.view('register.ejs', {can_register: true, error: 'An error has occured, retry later'});
+                                reply.view('register.ejs', {can_register: true, ERROR: 'An error has occured, retry later'});
                             });
                         }
                     });
 
                 } else {
-                    reply.view('register.ejs', {can_register: true, error: 'Invalid Username'});
+                    reply.view('register.ejs', {can_register: true, ERROR: 'Invalid Username'});
                 }
             } else {
-                reply.view('register.ejs', {can_register: true, error: 'Invalid Password'});          
+                reply.view('register.ejs', {can_register: true, ERROR: 'Invalid Password'});          
             }
         } else {
-            reply.view('register.ejs', {can_register: true, error: 'Invalid Email'});
+            reply.view('register.ejs', {can_register: true, ERROR: 'Invalid Email'});
         }
 
     }

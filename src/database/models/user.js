@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 module.exports = async (sequelize) => {
     const User = sequelize.define('User', {
         username: { 
-            type: DataTypes.STRING(64),
+            type: DataTypes.STRING(32),
             allowNull: false,
             primaryKey: true
         },
@@ -19,7 +19,7 @@ module.exports = async (sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: sequelize.models.Global_Group,
+                model: sequelize.models.GlobalGroup,
                 key: 'id'
             }
         }

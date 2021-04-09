@@ -1,17 +1,15 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = async (sequelize) => {
-    const GlobalGroup = sequelize.define('Global_Group', {
-        id: { 
+    const GlobalGroup = sequelize.define('GlobalGroup', {
+        id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-            autoIncrement: true,
             primaryKey: true
         },
         name: {
             type: DataTypes.STRING(32),
-            allowNull: false,
-            unique: true
+            allowNull: false
         },
         mask: {
             type: DataTypes.STRING(255),

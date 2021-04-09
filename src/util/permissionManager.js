@@ -1,17 +1,19 @@
 const db = require('../database/db');
 
-const globalGroupMasks = new Map();
+const globalMasks = new Map();
 
 module.exports = {
     reload: () => {
         const globalGroupModel = db.getGlobalGroupModel();
 
-        globalGroupModel.findAll().then((value) => {
-            globalGroupMasks.clear();
-            for(let i = 0; i < value.length; i++) {
-                console.log(value[i].id + " " + value[i].name + " " + value[i].mask);
-
-                globalGroupMasks.set(value[i].id, value[i].mask);
+        globalGroupModel.findAll({attributes: ['id','mask'], order: [['id','ASC']]}).then((groups) => {
+            if(groups.length === 4) {
+                globalMasks.clear();
+                for(let i = 0; i < groups.length; i++) {
+                    globalMasks.set(groups[i].id, groups[i].mask);
+                }
+            } else {
+                console.log('Can\'t reload global permissions: Global group quantity is not 4');
             }
         }, (err) => {
             console.log('Can\'t reload global permissions');
@@ -19,21 +21,25 @@ module.exports = {
         });
     },
 
-    defaultGlobalGroup: {
-        Anonymous: 1,
-        Registered_User: 2,
-        Moderator: 3,
-        Administrator: 4
-    },
+    GLOBAL_ANONYMOUS: 0,
+    GLOBAL_USER: 1,
+    GLOBAL_MODERATOR: 2,
+    GLOBAL_ADMIN: 3,
 
     globalBit: {
         REGISTER: 0,
-        CREATE_FORUM: 1,
-        DELETE_FORUM: 2
+        VIEW_FORUM: 1,
+        CREATE_FORUM: 2
     },
 
-    globalExists: (group_id) => globalGroupMasks.has(group_id),
+    isGlobalSet: (group_id, bit) => {
+        return globalMasks.get(group_id)[bit] == '1';
+    },
 
-    isGlobalSet: (group_id, bit) => globalGroupMasks.get(group_id)[bit] == '1',
+    forumBit: {
+        ANONYMOUS_POST: 0,
+        CREATE_POST: 1,
+        DELETE_OWN_POST: 2
+    }
 
 }

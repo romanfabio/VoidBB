@@ -1,10 +1,20 @@
-<h1>Topics</h1>
+<h1>Posts</h1>
+
+<p><%= status %></p>
 
 <% if(locals.posts) { %>
     <% for(let i = 0; i < posts.length; i++) { %>
         <div class="post-preview">
-            <h3><a href="/p/<%= posts[i].id %>"><%= posts[i].name %></a></h3>
+            <h3><a href="/p/<%= posts[i].id %>"><%= posts[i].title %></a></h3>
+            <p><%=  posts[i].description %></p>
+
+            <% if(posts[i].creator === null) { %>
+            <h5>Anonymous</h5>
+            <% } else { %>
+            <h5><a href="/u/<%= posts[i].creator %>"><%= posts[i].creator %></a></h5>
+            <% }%>
         </div>
     <% } %>
 <% } %>
 
+<a class="new-item" href="/p?f=<%= forum_name %>">New Post</a>

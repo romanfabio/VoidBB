@@ -9,7 +9,7 @@ module.exports = async (sequelize) => {
             primaryKey: true
         },
         forum_name: {
-            type: DataTypes.STRING(64),
+            type: DataTypes.STRING(32),
             allowNull: false,
             references: {
                 model: sequelize.models.Forum,
@@ -26,7 +26,7 @@ module.exports = async (sequelize) => {
         },
         creator: {
             type: DataTypes.STRING(32),
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: sequelize.models.User,
                 key: 'username'

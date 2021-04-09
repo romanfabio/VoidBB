@@ -1,10 +1,9 @@
-const viewForumController = require('../controllers/viewForum.controller');
-const newForumController = require('../controllers/newForum.controller');
+const newPostController = require('../controllers/newPost.controller');
 const getMeHook = require('./hooks/getMeHook');
 
 module.exports = (app) => {
 
-    app.route({
+  /*   app.route({
         method: 'GET',
         url: '/f/:name',
         schema: {
@@ -16,18 +15,25 @@ module.exports = (app) => {
                 required: ['name']
             }
         },
-        handler: viewForumController.get,
-        onRequest: getMeHook
-    });
+        handler: viewForumController.get
+    }); */
 
     app.route({
         method: 'GET',
-        url: '/f',
-        handler: newForumController.get,
-        onRequest: getMeHook
+        url: '/p',
+        schema: {
+            querystring: {
+                type: "object",
+                properties: {
+                    f: {type: 'string', nullable: false},
+                },
+                required: ['f']
+            }
+        },
+        handler: newPostController.get
     });
 
-    app.route({
+  /*   app.route({
         method: 'POST',
         url: '/f',
         schema: {
@@ -42,5 +48,5 @@ module.exports = (app) => {
         },
         handler: newForumController.post,
         onRequest: getMeHook
-    });
+    }); */
 };

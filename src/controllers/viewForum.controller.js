@@ -28,7 +28,7 @@ module.exports = {
                         // Forum doesn't exists, redirect to home
                         reply.redirect('/');
                     } else {
-                        /////////////////////// TODO: REFACTOR
+
                         const PostModel = db.getPostModel();
 
                         PostModel.findAll({
@@ -43,11 +43,15 @@ module.exports = {
 
                             if(request.is_auth) {
 
+                                viewParams.USERNAME = request.is_auth;
+
                                 if(forum.creator === request.is_auth) {
-                                    viewParams.status = 'admin';
+                                    //Admin have full permission
+                                    viewParams.can_create_post = true;
                                     reply.view('viewForum.ejs', viewParams);
                                     return;
                                 }
+
                                 const ForumModeratorModel = db.getForumModeratorModel();
 
                                 ForumModeratorModel.findOne({
@@ -58,16 +62,20 @@ module.exports = {
                                 })
                                 .then((value) => {
                                     if(value === null) {
-                                        viewParams.status = 'User';
+                                        if(forum.user_mask[pex.forumBit.CREATE_POST] == '1')
+                                            viewParams.can_create_post = true;
                                     } else {
-                                        viewParams.status = 'Moderator';
+                                        if(forum.moderator_mask[pex.forumBit.CREATE_POST] == '1')
+                                            viewParams.can_create_post = true;
                                     }
                                     reply.view('viewForum.ejs', viewParams);
                                 }, (err) => {
-
+                                    console.log(err);
+                                    reply.redirect('/');
                                 });
                             } else {
-                                viewParams.status = 'Anonymous';
+                                if(forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1')
+                                    viewParams.can_create_post = true;
                                 reply.view('viewForum.ejs', viewParams);
                             }
 
@@ -76,7 +84,7 @@ module.exports = {
                             console.log(err);
                             reply.redirect('/');
                         });
-                        ////////////////////
+                        
                     }
                 }, (err) => {
                     console.log(err);

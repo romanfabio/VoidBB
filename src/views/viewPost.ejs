@@ -1,0 +1,13 @@
+<a href="/f/<%= forum_name %>"><%= forum_name %></a>
+
+<h2><%= title %></h2>
+
+<p><%= description %></p>
+
+<% if(creator === null) { %>
+<h5>Anonymous</h5>
+<% } else { %>
+<h5><a href="/u/<%= creator %>"><%= creator %></a></h5>
+<% }%>
+
+<p><%= created %></p>

@@ -27,6 +27,9 @@ module.exports = {
     isPostTitle: (str) => {
         return str.length > 0 &&
             str.length <= variable.get('POST_TITLE_MAX_LENGTH');
+    },
+    isPostDescription: (str) => {
+        return str.length > 0;
     }
 };
 

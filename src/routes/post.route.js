@@ -19,20 +19,27 @@ module.exports = (app) => {
         onRequest: getMeHook
     });
 
-  /*   app.route({
+    app.route({
         method: 'POST',
-        url: '/f',
+        url: '/p',
         schema: {
+            querystring: {
+                type: "object",
+                properties: {
+                    f: {type: 'string', nullable: false},
+                },
+                required: ['f']
+            },
             body: {
                 type: "object",
                 properties: {
-                    name: {type: 'string', nullable: false},
+                    title: {type: 'string', nullable: false},
                     description: {type: 'string', nullable: false}
                 },
-                required: ['name','description']
+                required: ['title','description']
             }
         },
-        handler: newForumController.post,
+        handler: newPostController.post,
         onRequest: getMeHook
-    }); */
+    });
 };

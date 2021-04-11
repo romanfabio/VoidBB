@@ -5,6 +5,7 @@ const UserModel = require('./models/user');
 const ForumModel = require('./models/forum');
 const ForumModerator = require('./models/forumModerator');
 const PostModel = require('./models/post');
+const CommentModel = require('./models/comment');
 
 const sequelize = new Sequelize('postgres://voidbbuser:voidbbuser@localhost:5432/voidbb');
 
@@ -18,6 +19,7 @@ module.exports = {
             .then(() => ForumModel(sequelize))
             .then(() => ForumModerator(sequelize))
             .then(() => PostModel(sequelize))
+            .then(() => CommentModel(sequelize))
             .catch((err) => {
                 console.log('Can\'t initialize database\'s models');
                 console.log(err);
@@ -36,6 +38,8 @@ module.exports = {
 
     getForumModeratorModel: () => sequelize.models.ForumModerator,
 
-    getPostModel: () => sequelize.models.Post
+    getPostModel: () => sequelize.models.Post,
+
+    getCommentModel: () => sequelize.models.Comment
 
 };

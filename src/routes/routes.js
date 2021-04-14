@@ -4,6 +4,7 @@ const loginRoute = require('./login.route');
 const logoutRoute = require('./logout.route');
 const forumRoute = require('./forum.route');
 const postRoute = require('./post.route');
+const userRoute = require('./user.route');
 
 module.exports = (app) => {
     homeRoute(app);
@@ -12,4 +13,5 @@ module.exports = (app) => {
     logoutRoute(app);
     forumRoute(app);
     postRoute(app);
+    userRoute(app);
 }

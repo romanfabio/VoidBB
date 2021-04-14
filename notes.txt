@@ -61,7 +61,7 @@ ANONYMOUS
     . REGISTER
     x   CREATE_FORUM
     . VIEW_FORUM
-    x
+    . VIEW_USER
     x
     x
 
@@ -69,6 +69,7 @@ USER
     - REGISTER
     .   CREATE_FORUM
     - VIEW_FORUM
+    - VIEW_USER
 
 
 x-x FORUM PERMISSION x-x

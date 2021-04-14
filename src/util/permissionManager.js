@@ -29,7 +29,8 @@ module.exports = {
     globalBit: {
         REGISTER: 0,
         VIEW_FORUM: 1,
-        CREATE_FORUM: 2
+        CREATE_FORUM: 2,
+        VIEW_USER: 3
     },
 
     isGlobalSet: (group_id, bit) => {

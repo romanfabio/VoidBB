@@ -4,17 +4,6 @@ Valid Forum Name =>         /^[\x2D\x30-\x39\x41-\x5A\x5F\x61-\x7A]+$/
 
 
 
-SELECT ForumGroup.mask
-  FROM ForumUser 
-  INNER JOIN ForumGroup
-    ON ForumGroup.id = ForumUser.group_id
-
-    WHERE
-        ForumUser.username = 'mrvoid' AND
-        ForumGroup.forum_name = 'anarchy';
-
-SELECT mask FROM ForumUser INNER JOIN ForumGroup ON forum_id = forum_id WHERE forum_id = 1 AND user_id = 1;
-
 
 
 

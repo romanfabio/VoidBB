@@ -1,14 +1,14 @@
-.forum-preview {
+.preview {
     padding: 10px 20px;
-    border: 2px dotted black;
-    margin-bottom: 20px;
+    border-top: 1px solid black;
+    margin: 10px 0px;
 }
 
-.forum-name {
+.preview-title {
     text-decoration: none;
     font-weight: bold;
-    font-size: 1.5em;
     color: black;
+    font-style: italic;
 }
 
 .new-item {

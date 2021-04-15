@@ -1,9 +1,9 @@
-<h1 class="title">Forums</h1>
+<h1 class="title">Forum List</h1>
 <% if(locals.forums) { %>
     <% for(let i = 0; i < forums.length; i++) { %>
-        <div class="forum-preview">
-            <a class="forum-name" href="/f/<%= forums[i].name %>"><%= forums[i].name %></a>
-            <p class="forum-description"><%= forums[i].description %></p>
+        <div class="preview">
+            <h2><a class="preview-title" href="/f/<%= forums[i].name %>">f/<%= forums[i].name %></a></h2>
+            <p class="preview-description"><%= forums[i].description %></p>
         </div>
     <% } %>
 <% } %>

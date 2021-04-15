@@ -44,6 +44,7 @@ module.exports = {
 
                             viewParams.forum_name = name;
                             viewParams.posts = posts;
+                            viewParams.styles = ['preview-list.css'];
 
                             if(request.is_auth) {
 

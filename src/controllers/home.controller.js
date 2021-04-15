@@ -4,7 +4,7 @@ const pex = require('../util/permissionManager');
 module.exports = {
     get: (request, reply) => {
 
-        const viewParams = {};
+        const viewParams = {styles: ['preview-list.css']};
 
         if(request.is_auth)
             viewParams.USERNAME = request.is_auth;

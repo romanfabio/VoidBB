@@ -25,6 +25,8 @@ app.register(require('fastify-secure-session'), {
     }
 });
 
+app.register(require('fastify-flash'));
+
 
 app.register(require('fastify-static'), {
     root: path.join(__dirname, 'public'),

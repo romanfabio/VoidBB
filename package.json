@@ -20,6 +20,7 @@
     "bcrypt": "^5.0.1",
     "ejs": "^3.1.6",
     "fastify": "^3.14.0",
+    "fastify-flash": "^2.0.2",
     "fastify-formbody": "^5.0.0",
     "fastify-secure-session": "^2.3.1",
     "fastify-static": "^4.0.1",

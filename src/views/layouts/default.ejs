@@ -37,6 +37,11 @@
                 <h5 id="error"><%= ERROR %></h5>
             </div>
             <% } %>
+            <% if( locals.INFO ) { %>
+            <div id="info-div">
+                <h5 id="info"><%= INFO %></h5>
+            </div>
+            <% } %>
             <%- body %>
         </main>
         <footer>

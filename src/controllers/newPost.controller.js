@@ -130,6 +130,7 @@ module.exports = {
 
                                         PostModel.create({forum_name: name, title: data.title, description: data.description, creator: request.is_auth})
                                             .then(() => {
+                                                request.flash('info', 'Post created');
                                                 reply.redirect('/f/' + name);
                                             }, (err) => {
                                                 console.log(err);

@@ -54,6 +54,7 @@ module.exports = {
         
                             UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.GLOBAL_USER}).then((value) => {
                                 request.session.set('username', data.username);
+                                request.flash('info', 'Registration completed');
                                 reply.redirect('/');
                             }, (err) => {
                                 console.log(err);

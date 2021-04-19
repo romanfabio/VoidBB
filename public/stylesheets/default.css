@@ -58,6 +58,17 @@ main {
     color: red;
 }
 
+#info-div {
+    margin: 10px auto;
+    border: 1px solid green;
+    background-color: lightgreen;
+    padding: 10px 20px;
+}
+
+#info {
+    color: green;
+}
+
 footer {
     padding: 10px;
     background-color: #666;

@@ -39,6 +39,7 @@ module.exports = {
 
                 ForumModel.create({name: data.name, description: data.description, creator: request.is_auth, user_mask: '0000000', moderator_mask: '00000000'})
                     .then(() => {
+                        request.flash('info', 'Forum created');
                         reply.redirect('/f/' + data.name);
                     }, (err) => {
                         console.log(err);

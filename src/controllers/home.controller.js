@@ -4,28 +4,26 @@ const pex = require('../util/permissionManager');
 module.exports = {
     get: (request, reply) => {
 
-        const viewParams = {styles: ['preview-list.css']};
+        const view_params = request.view_params;
+        view_params.styles = ['preview-list.css'];
 
-        if(request.is_auth)
-            viewParams.USERNAME = request.is_auth;
-        else {
-            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
-                viewParams.can_register = true;
-        }
+       
+        if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER))
+            view_params.can_register = true;
 
         if(pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM))
-            viewParams.can_create_forum = true;
+            view_params.can_create_forum = true;
 
         const forumModel = db.getForumModel();
 
         forumModel.findAll().then((forums) => {
 
-            viewParams.forums = forums;
-            reply.view('home.ejs', viewParams);
+            view_params.forums = forums;
+            reply.view('home.ejs', view_params);
             
         }, (err) => {
-            viewParams.ERROR = 'An error has occured, retry later';
-            reply.view('home.ejs', viewParams);
+            view_params.ERROR = 'An error has occured, retry later';
+            reply.view('home.ejs', view_params);
         });
     }
 }

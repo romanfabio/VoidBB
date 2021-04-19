@@ -8,7 +8,7 @@ module.exports = {
         if(pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM)) { //If CREATE_FORUM is set then REGISTER must be set
 
             // User must be registered, request.is_auth is always valid
-            reply.view('newForum.ejs', {USERNAME: request.is_auth});
+            reply.view('newForum.ejs', request.view_params);
         }
         else {
             reply.redirect('/');
@@ -23,7 +23,7 @@ module.exports = {
         }
 
         // User must be registered, request.is_auth is always valid
-        const viewParams = {USERNAME: request.is_auth};
+        const view_params = request.view_params;
 
 
         const data = request.body;
@@ -42,17 +42,17 @@ module.exports = {
                         reply.redirect('/f/' + data.name);
                     }, (err) => {
                         console.log(err);
-                        viewParams.ERROR = 'An error has occured, retry later';
-                        reply.view('newForum.ejs', viewParams);
+                        view_params.ERROR = 'An error has occured, retry later';
+                        reply.view('newForum.ejs', view_params);
                     });
                     
             } else {
-                viewParams.ERROR = 'Invalid Description';
-                reply.view('newForum.ejs', viewParams);
+                view_params.ERROR = 'Invalid Description';
+                reply.view('newForum.ejs', view_params);
             }
         } else {
-            viewParams.ERROR = 'Invalid Name';
-            reply.view('newForum.ejs', viewParams);
+            view_params.ERROR = 'Invalid Name';
+            reply.view('newForum.ejs', view_params);
         }
     }
 };

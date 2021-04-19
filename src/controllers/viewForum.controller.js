@@ -8,18 +8,18 @@ module.exports = {
 
         if(name.length > 0) { // if url ends with /f/ , name is an invalid empty string, so redirect user to home
 
-            const viewParams = {};
+            const view_params = request.view_params;
 
             if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                viewParams.can_register = true;
+                view_params.can_register = true;
             }
 
             if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_FORUM)) {
 
-                viewParams.back = '/f/' + name;
-                viewParams.ERROR = 'You must be logged to do that';
+                view_params.back = '/f/' + name;
+                view_params.ERROR = 'You must be logged to do that';
 
-                reply.view('login.ejs', viewParams);
+                reply.view('login.ejs', view_params);
                 return;
             }
 
@@ -42,18 +42,16 @@ module.exports = {
                             }
                         }).then((posts) => {
 
-                            viewParams.forum_name = name;
-                            viewParams.posts = posts;
-                            viewParams.styles = ['preview-list.css'];
+                            view_params.forum_name = name;
+                            view_params.posts = posts;
+                            view_params.styles = ['preview-list.css'];
 
                             if(request.is_auth) {
 
-                                viewParams.USERNAME = request.is_auth;
-
                                 if(forum.creator === request.is_auth) {
                                     //Admin have full permission
-                                    viewParams.can_create_post = true;
-                                    reply.view('viewForum.ejs', viewParams);
+                                    view_params.can_create_post = true;
+                                    reply.view('viewForum.ejs', view_params);
                                     return;
                                 }
 
@@ -68,20 +66,20 @@ module.exports = {
                                 .then((value) => {
                                     if(value === null) {
                                         if(forum.user_mask[pex.forumBit.CREATE_POST] == '1')
-                                            viewParams.can_create_post = true;
+                                            view_params.can_create_post = true;
                                     } else {
                                         if(forum.moderator_mask[pex.forumBit.CREATE_POST] == '1')
-                                            viewParams.can_create_post = true;
+                                            view_params.can_create_post = true;
                                     }
-                                    reply.view('viewForum.ejs', viewParams);
+                                    reply.view('viewForum.ejs', view_params);
                                 }, (err) => {
                                     console.log(err);
                                     reply.redirect('/');
                                 });
                             } else {
                                 if(forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1')
-                                    viewParams.can_create_post = true;
-                                reply.view('viewForum.ejs', viewParams);
+                                    view_params.can_create_post = true;
+                                reply.view('viewForum.ejs', view_params);
                             }
 
                             

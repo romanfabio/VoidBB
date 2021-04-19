@@ -2,6 +2,8 @@ const pex = require('../../util/permissionManager');
 const db = require('../../database/db');
 
 /*
+    Always
+        - request.view_params : object = <parameters to be passed to the view>
     Authenticated User
         - request.is_auth : string = <user's username>
         - request.user_global_group : number = <user's global group id>
@@ -10,6 +12,8 @@ const db = require('../../database/db');
 */
 module.exports = (request, reply, done) => {
     console.log('GetMe Hook');
+
+    request.view_params = {};
 
     const username = request.session.get('username');
     if(username) {
@@ -24,6 +28,7 @@ module.exports = (request, reply, done) => {
                     done();
                 } else {
                     request.is_auth = username;
+                    request.view_params.USERNAME = username;
                     request.user_global_group = user.global_group;
                     done();
                 }

@@ -7,8 +7,10 @@ module.exports = {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else {
-            if(pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
-                reply.view('login.ejs', {can_register: true});
+            if(pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) {
+                request.view_params.can_register = true;
+                reply.view('login.ejs', request.view_params);
+            }
             else
                 reply.view('login.ejs');
         }
@@ -22,10 +24,10 @@ module.exports = {
             return;
         }
 
-        const viewParams = {};
+        const view_params = request.view_params;
 
         if(pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
-            viewParams.can_register = true;
+            view_params.can_register = true;
 
         const data = request.body;
 
@@ -38,15 +40,15 @@ module.exports = {
         UserModel.findByPk(data.username, {attributes: ['password']})
             .then((user) => {
                 if(user === null) {
-                    viewParams.ERROR = 'Username and/or password invalid';
-                    reply.view('login.ejs', viewParams);
+                    view_params.ERROR = 'Username and/or password invalid';
+                    reply.view('login.ejs', view_params);
                 } else {
 
                     bcrypt.compare(data.password, user.password, (err, result) => {
                         if(err) {
                             console.log(err);
-                            viewParams.ERROR = 'An error has occured, retry later';
-                            reply.view('login.ejs', viewParams);
+                            view_params.ERROR = 'An error has occured, retry later';
+                            reply.view('login.ejs', view_params);
                         } else {
                             if(result) {
                                 request.session.set('username', data.username);
@@ -56,16 +58,16 @@ module.exports = {
                                 else
                                     reply.redirect('/');
                             } else {
-                                viewParams.ERROR = 'Username and/or password invalid';
-                                reply.view('login.ejs', viewParams);
+                                view_params.ERROR = 'Username and/or password invalid';
+                                reply.view('login.ejs', view_params);
                             }
                         }
                     });
                 }
             }, (err) => {
                 console.log(err);
-                viewParams.ERROR = 'An error has occured, retry later';
-                reply.view('login.ejs', viewParams);
+                view_params.ERROR = 'An error has occured, retry later';
+                reply.view('login.ejs', view_params);
             });
         
     }

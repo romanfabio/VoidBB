@@ -10,18 +10,18 @@ module.exports = {
 
         if(name.length > 0) { // if param is like /p?f= , f is an invalid empty string, so redirect user to home
 
-            const viewParams = {};
+            const view_params = request.view_params;
 
             if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                viewParams.can_register = true;
+                view_params.can_register = true;
             }
 
             if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_FORUM)) {
 
-                viewParams.back = '/f/' + name;
-                viewParams.ERROR = 'You must be logged to do that';
+                view_params.back = '/f/' + name;
+                view_params.ERROR = 'You must be logged to do that';
 
-                reply.view('login.ejs', viewParams);
+                reply.view('login.ejs', view_params);
                 return;
             }
 
@@ -34,14 +34,12 @@ module.exports = {
                         reply.redirect('/');
                     } else {
 
-                        viewParams.forum_name = name;
+                        view_params.forum_name = name;
 
                         if(request.is_auth) {
-
-                            viewParams.USERNAME = request.is_auth;
                             
                             if(forum.creator === request.is_auth) {
-                                reply.view('newPost.ejs', viewParams);
+                                reply.view('newPost.ejs', view_params);
                                 return;
                             }
 
@@ -56,12 +54,12 @@ module.exports = {
                                 .then((value) => {
                                     if(value === null) {
                                         if(forum.user_mask[pex.forumBit.CREATE_POST] == '1')
-                                            reply.view('newPost.ejs', viewParams);
+                                            reply.view('newPost.ejs', view_params);
                                         else
                                             reply.redirect('/f/' + name);
                                     } else {
                                         if(forum.moderator_mask[pex.forumBit.CREATE_POST] == '1')
-                                            reply.view('newPost.ejs', viewParams);
+                                            reply.view('newPost.ejs', view_params);
                                         else
                                             reply.redirect('/f/' + name);
                                     }
@@ -72,7 +70,7 @@ module.exports = {
 
                         } else {
                             if(forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1')
-                                reply.view('newPost.ejs', viewParams);
+                                reply.view('newPost.ejs', view_params);
                             else
                                 reply.redirect('/f/' + name);
                         }
@@ -92,18 +90,18 @@ module.exports = {
 
         if(name.length > 0) { // if param is like /p?f= , f is an invalid empty string, so redirect user to home
 
-            const viewParams = {};
+            const view_params = request.view_params;
 
             if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                viewParams.can_register = true;
+                view_params.can_register = true;
             }
 
             if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_FORUM)) {
 
-                viewParams.back = '/f/' + name;
-                viewParams.ERROR = 'You must be logged to do that';
+                view_params.back = '/f/' + name;
+                view_params.ERROR = 'You must be logged to do that';
 
-                reply.view('login.ejs', viewParams);
+                reply.view('login.ejs', view_params);
                 return;
             }
 
@@ -116,13 +114,11 @@ module.exports = {
                         reply.redirect('/');
                     } else {
 
-                        viewParams.forum_name = name;
+                        view_params.forum_name = name;
 
                         const data = request.body;
 
                         if(request.is_auth) {
-
-                            viewParams.USERNAME = request.is_auth;
                             
                             if(forum.creator === request.is_auth) {
                                 data.title = data.title.trim();
@@ -137,16 +133,16 @@ module.exports = {
                                                 reply.redirect('/f/' + name);
                                             }, (err) => {
                                                 console.log(err);
-                                                viewParams.ERROR = 'An error has occured, retry later';
-                                                reply.view('newPost.ejs', viewParams);
+                                                view_params.ERROR = 'An error has occured, retry later';
+                                                reply.view('newPost.ejs', view_params);
                                             })
                                     } else {
-                                        viewParams.ERROR = 'Invalid description';
-                                        reply.view('newPost.ejs', viewParams);
+                                        view_params.ERROR = 'Invalid description';
+                                        reply.view('newPost.ejs', view_params);
                                     }
                                 } else {
-                                    viewParams.ERROR = 'Invalid title';
-                                    reply.view('newPost.ejs', viewParams);
+                                    view_params.ERROR = 'Invalid title';
+                                    reply.view('newPost.ejs', view_params);
                                 }
                                 return;
                             }
@@ -174,16 +170,16 @@ module.exports = {
                                                             reply.redirect('/f/' + name);
                                                         }, (err) => {
                                                             console.log(err);
-                                                            viewParams.ERROR = 'An error has occured, retry later';
-                                                            reply.view('newPost.ejs', viewParams);
+                                                            view_params.ERROR = 'An error has occured, retry later';
+                                                            reply.view('newPost.ejs', view_params);
                                                         });
                                                 } else {
-                                                    viewParams.ERROR = 'Invalid description';
-                                                    reply.view('newPost.ejs', viewParams);
+                                                    view_params.ERROR = 'Invalid description';
+                                                    reply.view('newPost.ejs', view_params);
                                                 }
                                             } else {
-                                                viewParams.ERROR = 'Invalid title';
-                                                reply.view('newPost.ejs', viewParams);
+                                                view_params.ERROR = 'Invalid title';
+                                                reply.view('newPost.ejs', view_params);
                                             }
                                         }
                                         else
@@ -202,16 +198,16 @@ module.exports = {
                                                             reply.redirect('/f/' + name);
                                                         }, (err) => {
                                                             console.log(err);
-                                                            viewParams.ERROR = 'An error has occured, retry later';
-                                                            reply.view('newPost.ejs', viewParams);
+                                                            view_params.ERROR = 'An error has occured, retry later';
+                                                            reply.view('newPost.ejs', view_params);
                                                         });
                                                 } else {
-                                                    viewParams.ERROR = 'Invalid description';
-                                                    reply.view('newPost.ejs', viewParams);
+                                                    view_params.ERROR = 'Invalid description';
+                                                    reply.view('newPost.ejs', view_params);
                                                 }
                                             } else {
-                                                viewParams.ERROR = 'Invalid title';
-                                                reply.view('newPost.ejs', viewParams);
+                                                view_params.ERROR = 'Invalid title';
+                                                reply.view('newPost.ejs', view_params);
                                             }
                                         }
                                         else
@@ -236,16 +232,16 @@ module.exports = {
                                                 reply.redirect('/f/' + name);
                                             }, (err) => {
                                                 console.log(err);
-                                                viewParams.ERROR = 'An error has occured, retry later';
-                                                reply.view('newPost.ejs', viewParams);
+                                                view_params.ERROR = 'An error has occured, retry later';
+                                                reply.view('newPost.ejs', view_params);
                                             })
                                     } else {
-                                        viewParams.ERROR = 'Invalid description';
-                                        reply.view('newPost.ejs', viewParams);
+                                        view_params.ERROR = 'Invalid description';
+                                        reply.view('newPost.ejs', view_params);
                                     }
                                 } else {
-                                    viewParams.ERROR = 'Invalid title';
-                                    reply.view('newPost.ejs', viewParams);
+                                    view_params.ERROR = 'Invalid title';
+                                    reply.view('newPost.ejs', view_params);
                                 }
                             }
                             else

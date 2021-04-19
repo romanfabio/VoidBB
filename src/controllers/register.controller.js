@@ -8,7 +8,8 @@ module.exports = {
         if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
             reply.redirect('/');
         else if (pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
-            reply.view('register.ejs', {can_register: true});
+            request.view_params.can_register = true;
+            reply.view('register.ejs', request.view_params);
         } else {
             reply.redirect('/');
         }
@@ -28,6 +29,9 @@ module.exports = {
             return;
         }
 
+        const view_params = request.view_params;
+        view_params.can_register = true;
+
         const data = request.body;
         
         data.email = data.email.trim();
@@ -42,7 +46,8 @@ module.exports = {
                     bcrypt.hash(data.password, 10, (err, hash) => {
                         if(err) {
                             console.log(err);
-                            reply.view('register.ejs', {can_register: true, ERROR: 'An error has occured, retry later'});
+                            view_params.ERROR = 'An error has occured, retry later';
+                            reply.view('register.ejs', view_params);
                         } else {
                     
                             const UserModel = db.getUserModel();
@@ -52,19 +57,23 @@ module.exports = {
                                 reply.redirect('/');
                             }, (err) => {
                                 console.log(err);
-                                reply.view('register.ejs', {can_register: true, ERROR: 'An error has occured, retry later'});
+                                view_params.ERROR = 'An error has occured, retry later';
+                                reply.view('register.ejs', view_params);
                             });
                         }
                     });
 
                 } else {
-                    reply.view('register.ejs', {can_register: true, ERROR: 'Invalid Username'});
+                    view_params.ERROR = 'Invalid Username';
+                    reply.view('register.ejs', view_params);
                 }
             } else {
-                reply.view('register.ejs', {can_register: true, ERROR: 'Invalid Password'});          
+                view_params.ERROR = 'Invalid Password';
+                reply.view('register.ejs', view_params);       
             }
         } else {
-            reply.view('register.ejs', {can_register: true, ERROR: 'Invalid Email'});
+            view_params.ERROR = 'Invalid Email';
+            reply.view('register.ejs', view_params);
         }
 
     }

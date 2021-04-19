@@ -8,18 +8,18 @@ module.exports = {
 
         if(username.length > 0) {
 
-            const viewParams = {};
+            const view_params = request.view_params;
 
             if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                viewParams.can_register = true;
+                view_params.can_register = true;
             }
 
             if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_USER)) {
 
-                viewParams.back = '/u/' + username;
-                viewParams.ERROR = 'You must be logged to do that';
+                view_params.back = '/u/' + username;
+                view_params.ERROR = 'You must be logged to do that';
 
-                reply.view('login.ejs', viewParams);
+                reply.view('login.ejs', view_params);
                 return;
 
             }
@@ -31,13 +31,9 @@ module.exports = {
                     // User doesn't exists, redirect to home
                     reply.redirect('/');
                 } else {
-                    viewParams.user = {username: user.username, email: user.email};
+                    view_params.user = {username: user.username, email: user.email};
 
-                    if(request.is_auth) {
-                        viewParams.USERNAME = request.is_auth;
-                    }
-
-                    reply.view('viewUser.ejs', viewParams);
+                    reply.view('viewUser.ejs', view_params);
                 }
             }, (err) => {
                 console.log(err);

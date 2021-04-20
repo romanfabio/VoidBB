@@ -20,11 +20,13 @@ module.exports = (request, reply, done) => {
 
         const msgs = reply.flash();
 
-        if(msgs.info)
-            request.view_params.INFO = msgs.info[0];
-        if(msgs.error)
-            request.view_params.ERROR = msgs.error[0];
-
+        if(msgs) {
+            if(msgs.info)
+                request.view_params.INFO = msgs.info[0];
+            if(msgs.error)
+                request.view_params.ERROR = msgs.error[0];
+        }
+        
         const UserModel = db.getUserModel();
 
         UserModel.findByPk(username, {attributes: ['global_group']})

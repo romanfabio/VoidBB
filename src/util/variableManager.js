@@ -3,13 +3,16 @@ const db = require('../database/db');
 const map = new Map();
 
 module.exports = {
-    reload: () => {
+    reload: async () => {
         const variableModel = db.getVariableModel();
 
-        variableModel.findAll().then((value) => {
+        try {
+            const vars = await variableModel.findAll();
+
             map.clear();
-            for(let i = 0; i < value.length; i++) {
-                let elem = value[i];
+
+            for(let i = 0; i < vars.length; i++) {
+                let elem = vars[i];
                 if(elem.isInt && elem.value != null)
                     elem.value = parseInt(elem.value);
                 map.set(elem.key, elem.value);
@@ -17,10 +20,12 @@ module.exports = {
 
             console.log(map);
 
-        }, (err) => {
+            return true;
+        } catch(err) {
             console.log('Can\'t reload global variables');
             console.log(err);
-        });
+            return false;
+        }
     },
 
     get: (key) => map.get(key)

@@ -1,5 +1,6 @@
 const pex = require('../../util/permissionManager');
 const db = require('../../database/db');
+const cache = require('../../util/cache');
 
 /*
     Always
@@ -27,6 +28,20 @@ module.exports = (request, reply, done) => {
                 request.view_params.ERROR = msgs.error[0];
         }
 
+        const cached = cache.global_group(username);
+
+        if(cached) {
+            request.is_auth = username;
+            request.view_params.USERNAME = username;
+            request.user_global_group = cached;
+
+            if(cached == pex.GLOBAL_ADMIN)
+                request.view_params.AP = true;
+            
+            done();
+            return;
+        }
+
         const UserModel = db.getUserModel();
 
         UserModel.findByPk(username, {attributes: ['global_group']})
@@ -42,6 +57,8 @@ module.exports = (request, reply, done) => {
 
                     if(user.global_group == pex.GLOBAL_ADMIN)
                         request.view_params.AP = true;
+
+                    cache.invalidate_global_group(username, user.global_group);
                     
                     done();
                 }

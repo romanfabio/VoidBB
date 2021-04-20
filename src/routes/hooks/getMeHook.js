@@ -26,7 +26,7 @@ module.exports = (request, reply, done) => {
             if(msgs.error)
                 request.view_params.ERROR = msgs.error[0];
         }
-        
+
         const UserModel = db.getUserModel();
 
         UserModel.findByPk(username, {attributes: ['global_group']})
@@ -39,6 +39,10 @@ module.exports = (request, reply, done) => {
                     request.is_auth = username;
                     request.view_params.USERNAME = username;
                     request.user_global_group = user.global_group;
+
+                    if(user.global_group == pex.GLOBAL_ADMIN)
+                        request.view_params.AP = true;
+                    
                     done();
                 }
             }, (err) => {

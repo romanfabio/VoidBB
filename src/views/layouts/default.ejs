@@ -28,6 +28,9 @@
                 <% } else { %>
                 <li class="menu-item right"><a href="/logout">Logout</a></li>
                 <li class="menu-item right">Hello, <%= USERNAME %></li>
+                <% if(locals.AP) { %>
+                <li class="menu-item right"><a href="/ap/general">AP</a></li>
+                <% } %>
                 <% } %>
             </ul>
         </nav>

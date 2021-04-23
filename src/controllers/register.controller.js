@@ -5,9 +5,9 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.is_auth) // L'utente autenticato non ha bisogno di autenticarsi di nuovo
+        if(request.is_auth) // User is already authenticated
             reply.redirect('/');
-        else if (pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) { // Controlla se il gruppo Anonymous ha il permesso di registrarsi
+        else if (pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) { // Check if user has permission to register
             request.view_params.can_register = true;
             reply.view('register.ejs', request.view_params);
         } else {
@@ -17,13 +17,13 @@ module.exports = {
 
     post: (request, reply) => {
 
-        // L'utente autenticato non ha bisogno di autenticarsi di nuovo
+         // User is already authenticated
         if(request.is_auth) {
             reply.redirect('/');
             return;
         }
 
-        // Controlla se il gruppo Anonymous ha il permesso di registrarsi
+        // Check if user has permission to register
         if(!pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) {
             reply.redirect('/');
             return;
@@ -43,7 +43,7 @@ module.exports = {
                 data.username = data.username.trim();
                 if(validator.isUsername(data.username)) {
 
-                    bcrypt.hash(data.password, 10, (err, hash) => {
+                    bcrypt.hash(data.password, 10, async (err, hash) => {
                         if(err) {
                             console.log(err);
                             view_params.ERROR = 'An error has occured, retry later';
@@ -51,16 +51,20 @@ module.exports = {
                         } else {
                     
                             const UserModel = db.getUserModel();
-        
-                            UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.GLOBAL_USER}).then((value) => {
+
+                            try {
+
+                                await UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.GLOBAL_USER});
+
                                 request.session.set('username', data.username);
                                 request.flash('info', 'Registration completed');
                                 reply.redirect('/');
-                            }, (err) => {
+
+                            } catch(err) {
                                 console.log(err);
                                 view_params.ERROR = 'An error has occured, retry later';
                                 reply.view('register.ejs', view_params);
-                            });
+                            }
                         }
                     });
 
@@ -70,12 +74,14 @@ module.exports = {
                 }
             } else {
                 view_params.ERROR = 'Invalid Password';
-                reply.view('register.ejs', view_params);       
+                reply.view('register.ejs', view_params);    
             }
         } else {
             view_params.ERROR = 'Invalid Email';
             reply.view('register.ejs', view_params);
         }
+
+        
 
     }
 }

@@ -2,7 +2,7 @@ const db = require('../database/db');
 const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: (request, reply) => {
+    get: async (request, reply) => {
 
         const view_params = request.view_params;
         view_params.styles = ['preview-list.css'];
@@ -16,14 +16,15 @@ module.exports = {
 
         const forumModel = db.getForumModel();
 
-        forumModel.findAll().then((forums) => {
+        try {
+            const forums = await forumModel.findAll();
 
             view_params.forums = forums;
-            reply.view('home.ejs', view_params);
-            
-        }, (err) => {
+        } catch(err) {
+            console.log(err);
             view_params.ERROR = 'An error has occured, retry later';
-            reply.view('home.ejs', view_params);
-        });
+        }
+
+        reply.view('home.ejs', view_params);
     }
-}
+};

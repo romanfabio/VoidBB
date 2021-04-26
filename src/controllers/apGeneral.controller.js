@@ -13,7 +13,7 @@ module.exports = {
         }
     },
 
-    post: (request, reply) => {
+    post: async (request, reply) => {
 
         if(request.user_global_group != pex.GLOBAL_ADMIN) {
             reply.redirect('/');
@@ -41,21 +41,23 @@ module.exports = {
 
         const VariableModel = db.getVariableModel();
 
-        VariableModel.update({value: data.board_name}, {where: {key: 'BOARD_NAME'}})
-            .then(() => variable.reload())
-            .then((success) => {
-                if(success) {
-                    view_params.INFO = 'Settings saved';
-                    view_params.board_name = variable.get('BOARD_NAME');
-                } else 
-                    view_params.ERROR = 'An error has occured, retry later';
+        try {
+            await VariableModel.update({value: data.board_name}, {where: {key: 'BOARD_NAME'}});
+            const success = await variable.reload();
 
-                reply.view('apGeneral.ejs', view_params);
-            })
-            .catch(err => {
-                console.log(err);
+            if(success) {
+                view_params.INFO = 'Settings saved';
+                view_params.board_name = variable.get('BOARD_NAME');
+            } else 
                 view_params.ERROR = 'An error has occured, retry later';
-                reply.view('apGeneral.ejs', view_params);
-            });
+
+        } catch(err) {
+            console.log(err);
+            view_params.ERROR = 'An error has occured, retry later';
+        }
+
+        
+        reply.view('apGeneral.ejs', view_params);
+
     }
 }

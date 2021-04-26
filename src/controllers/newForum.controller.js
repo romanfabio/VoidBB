@@ -15,7 +15,7 @@ module.exports = {
         }
     },
 
-    post: (request, reply) => {
+    post: async (request, reply) => {
 
         if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM)) {
             reply.redirect('/');
@@ -37,15 +37,17 @@ module.exports = {
 
                 const ForumModel = db.getForumModel();
 
-                ForumModel.create({name: data.name, description: data.description, creator: request.is_auth, user_mask: '0000000', moderator_mask: '00000000'})
-                    .then(() => {
-                        request.flash('info', 'Forum created');
-                        reply.redirect('/f/' + data.name);
-                    }, (err) => {
-                        console.log(err);
-                        view_params.ERROR = 'An error has occured, retry later';
-                        reply.view('newForum.ejs', view_params);
-                    });
+                try {
+                    await ForumModel.create({name: data.name, description: data.description, creator: request.is_auth, user_mask: '0000000', moderator_mask: '00000000'});
+
+                    request.flash('info', 'Forum created');
+                    reply.redirect('/f/' + data.name);
+
+                } catch(err) {
+                    console.log(err);
+                    view_params.ERROR = 'An error has occured, retry later';
+                    reply.view('newForum.ejs', view_params);
+                }
                     
             } else {
                 view_params.ERROR = 'Invalid Description';
@@ -55,5 +57,6 @@ module.exports = {
             view_params.ERROR = 'Invalid Name';
             reply.view('newForum.ejs', view_params);
         }
+
     }
 };

@@ -3,7 +3,7 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
 
-    get: (request, reply) => {
+    get: async (request, reply) => {
         const username = request.params.username;
 
         if(username.length > 0) {
@@ -26,19 +26,17 @@ module.exports = {
 
             const UserModel = db.getUserModel();
 
-            UserModel.findByPk(username, {attributes: ['username', 'email']}).then((user) => {
-                if(user === null) {
-                    // User doesn't exists, redirect to home
-                    reply.redirect('/');
-                } else {
-                    view_params.user = {username: user.username, email: user.email};
+            try {
+                const user = await UserModel.findByPk(username, {attributes: ['username', 'email']});
 
+                if(user !== null) {
+                    view_params.user = {username: user.username, email: user.email};
                     reply.view('viewUser.ejs', view_params);
                 }
-            }, (err) => {
+            } catch(err) {
                 console.log(err);
                 reply.redirect('/');
-            });
+            }
 
         } else {
             reply.redirect('/');

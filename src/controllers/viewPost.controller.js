@@ -1,9 +1,8 @@
 const db = require('../database/db');
 const pex = require('../util/permissionManager');
-const { Op } = require("sequelize");
 
 module.exports = {
-    get: (request, reply) => {
+    get: async (request, reply) => {
         const id = request.params.id;
 
         const view_params = request.view_params;
@@ -23,24 +22,23 @@ module.exports = {
 
         const PostModel = db.getPostModel();
 
-        PostModel.findByPk(id)
-            .then((post) => {
-                if(post === null) {
-                    //Post doesn't exists, redirect to home
-                    reply.redirect('/');
-                } else {
+        try {
+            const post = await PostModel.findByPk(id);
 
-                    view_params.forum_name = post.forum_name;
-                    view_params.title = post.title;
-                    view_params.description = post.description;
-                    view_params.creator = post.creator;
-                    view_params.created = post.created;
+            if(post !== null) {
+                view_params.forum_name = post.forum_name;
+                view_params.title = post.title;
+                view_params.description = post.description;
+                view_params.creator = post.creator;
+                view_params.created = post.created;
 
-                    reply.view('viewPost.ejs', view_params);
-                }
-            }, (err) => {
-                console.log(err);
-                reply.redirect('/');
-            });
+                reply.view('viewPost.ejs', view_params);
+
+            }
+        } catch(err) {
+            console.log(err);
+            reply.redirect('/');
+        }
+
     }
-}
+};

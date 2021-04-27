@@ -1,12 +1,15 @@
 const registerController = require('../controllers/register.controller');
 const isAuthHook = require('./hooks/isAuthHook');
+const viewHook = require('./hooks/viewHook');
+const messageHook = require('./hooks/messageHook');
+const globalHook = require('./hooks/globalHook');
 
 module.exports = (app) => {
     app.route({
         method: 'GET',
         url: '/register',
         handler: registerController.get,
-        onRequest: isAuthHook
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -24,6 +27,6 @@ module.exports = (app) => {
             }
         },
         handler: registerController.post,
-        onRequest: isAuthHook
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

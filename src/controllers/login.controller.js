@@ -4,29 +4,22 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.is_auth) // User is already authenticated
+        if(request.user.username) // User is already authenticated
             reply.redirect('/');
-        else {
-            if(pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) // Check if user has permission to register
-                request.view_params.can_register = true;
-            
-            reply.view('login.ejs', request.view_params);
-        }
+        else 
+            reply.view('login.ejs', request.view_args);
+
     },
 
     post: async (request, reply) => {
 
         // User is already authenticated
-        if(request.is_auth) {
+        if(request.user.username) {
             reply.redirect('/');
             return;
         }
 
-        const view_params = request.view_params;
-
-        // Check if user has permission to register
-        if(pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
-            view_params.can_register = true;
+        const view_args = request.view_args;
 
         const data = request.body;
 
@@ -45,8 +38,8 @@ module.exports = {
                 bcrypt.compare(data.password, user.password, (err, match) => {
                     if(err) {
                         console.log(err);
-                        view_params.ERROR = 'An error has occured, retry later';
-                        reply.view('login.ejs', view_params);
+                        view_args.ERROR = 'An error has occured, retry later';
+                        reply.view('login.ejs', view_args);
                     } else {
                         if(match) {
                             request.session.set('username', data.username);
@@ -58,21 +51,21 @@ module.exports = {
                                 reply.redirect('/');
                             
                         } else { // Passwords don't match
-                            view_params.ERROR = 'Username and/or password invalid';
-                            reply.view('login.ejs', view_params);
+                            view_args.ERROR = 'Username and/or password invalid';
+                            reply.view('login.ejs', view_args);
                         }
                     }
                 });
 
             } else { // Username doesn't exist
-                view_params.ERROR = 'Username and/or password invalid';
-                reply.view('login.ejs', view_params);
+                view_args.ERROR = 'Username and/or password invalid';
+                reply.view('login.ejs', view_args);
             }
 
         } catch(err) {
             console.log(err);
-            view_params.ERROR = 'An error has occured, retry later';
-            reply.view('login.ejs', view_params);
+            view_args.ERROR = 'An error has occured, retry later';
+            reply.view('login.ejs', view_args);
         }
         
     }

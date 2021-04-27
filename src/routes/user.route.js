@@ -1,5 +1,8 @@
 const viewUserController = require('../controllers/viewUser.controller');
-const getMeHook = require('./hooks/getMeHook');
+const isAuthHook = require('./hooks/isAuthHook');
+const viewHook = require('./hooks/viewHook');
+const messageHook = require('./hooks/messageHook');
+const globalHook = require('./hooks/globalHook');
 
 module.exports = (app) => {
 
@@ -16,6 +19,6 @@ module.exports = (app) => {
             }
         },
         handler: viewUserController.get,
-        onRequest: getMeHook
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

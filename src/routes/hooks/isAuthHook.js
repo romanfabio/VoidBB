@@ -1,19 +1,18 @@
 /*
     Always
-        - request.view_params : object = <parameters to be passed to the view>
+        - request.user : object = <user's data>
     Authenticated User
-        - request.is_auth : string = <user's username>
+        - request.user.username : string = <user's name>
 */
 module.exports = (request, reply, done) => {
     console.log('isAuth Hook');
+
     const username = request.session.get('username');
 
-    request.view_params = {};
+    request.user = {};
 
-    if(username) {
-        request.is_auth = username;
-        request.view_params.USERNAME = username;
-    }
+    if(username)
+        request.user.username = username;
 
     done();
 }

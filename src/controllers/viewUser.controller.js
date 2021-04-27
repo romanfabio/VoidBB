@@ -8,18 +8,14 @@ module.exports = {
 
         if(username.length > 0) {
 
-            const view_params = request.view_params;
+            const view_args = request.view_args;
 
-            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                view_params.can_register = true;
-            }
+            if(!pex.isGlobalSet(request.user.global_group, pex.globalBit.VIEW_USER)) {
 
-            if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_USER)) {
+                view_args.back = '/u/' + username;
+                view_args.ERROR = 'You must be logged to do that';
 
-                view_params.back = '/u/' + username;
-                view_params.ERROR = 'You must be logged to do that';
-
-                reply.view('login.ejs', view_params);
+                reply.view('login.ejs', view_args);
                 return;
 
             }
@@ -30,8 +26,10 @@ module.exports = {
                 const user = await UserModel.findByPk(username, {attributes: ['username', 'email']});
 
                 if(user !== null) {
-                    view_params.user = {username: user.username, email: user.email};
-                    reply.view('viewUser.ejs', view_params);
+                    view_args.user = {username: user.username, email: user.email};
+                    reply.view('viewUser.ejs', view_args);
+                } else {
+                    reply.redirect('/');
                 }
             } catch(err) {
                 console.log(err);

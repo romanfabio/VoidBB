@@ -1,6 +1,9 @@
 const newPostController = require('../controllers/newPost.controller');
 const viewPostController = require('../controllers/viewPost.controller');
-const getMeHook = require('./hooks/getMeHook');
+const isAuthHook = require('./hooks/isAuthHook');
+const viewHook = require('./hooks/viewHook');
+const messageHook = require('./hooks/messageHook');
+const globalHook = require('./hooks/globalHook');
 
 module.exports = (app) => {
 
@@ -17,7 +20,7 @@ module.exports = (app) => {
             }
         },
         handler: viewPostController.get,
-        onRequest: getMeHook
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -33,7 +36,7 @@ module.exports = (app) => {
             }
         },
         handler: newPostController.get,
-        onRequest: getMeHook
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -57,6 +60,6 @@ module.exports = (app) => {
             }
         },
         handler: newPostController.post,
-        onRequest: getMeHook
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

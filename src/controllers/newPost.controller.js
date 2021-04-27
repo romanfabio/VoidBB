@@ -1,258 +1,199 @@
 const db = require('../database/db');
 const validator = require('../util/validator');
 const pex = require('../util/permissionManager');
-const {UniqueConstraintError} = require('sequelize');
+const { UniqueConstraintError } = require('sequelize');
 
 module.exports = {
-    get: (request, reply) => {
+    get: async (request, reply) => {
 
         const name = request.query.f;
 
-        if(name.length > 0) { // if param is like /p?f= , f is an invalid empty string, so redirect user to home
+        if (name.length > 0) { // if param is like /p?f= , f is an invalid empty string, so redirect user to home
 
-            const view_params = request.view_params;
+            const view_args = request.view_args;
 
-            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                view_params.can_register = true;
-            }
+            if (!pex.isGlobalSet(request.user.global_group, pex.globalBit.VIEW_FORUM)) {
 
-            if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_FORUM)) {
+                view_args.back = '/f/' + name;
+                view_args.ERROR = 'You must be logged to do that';
 
-                view_params.back = '/f/' + name;
-                view_params.ERROR = 'You must be logged to do that';
-
-                reply.view('login.ejs', view_params);
+                reply.view('login.ejs', view_args);
                 return;
             }
 
             const ForumModel = db.getForumModel();
 
-            ForumModel.findByPk(name, {attributes: ['creator', 'user_mask', 'moderator_mask']})
-                .then((forum) => {
-                    if(forum === null) {
-                        // Forum doesn't exists, redirect to home
-                        reply.redirect('/');
-                    } else {
+            try {
 
-                        view_params.forum_name = name;
+                const forum = await ForumModel.findByPk(name, { attributes: ['creator', 'user_mask', 'moderator_mask'] });
 
-                        if(request.is_auth) {
-                            
-                            if(forum.creator === request.is_auth) {
-                                reply.view('newPost.ejs', view_params);
-                                return;
+                if (forum !== null) {
+
+                    view_args.forum_name = name;
+
+                    if (request.user.username) {
+
+                        const username = request.user.username;
+
+                        // Board admin and forum admin have full permission
+                        if (forum.creator === request.user.username || request.user.global_group === pex.GLOBAL_ADMIN) {
+                            reply.view('newPost.ejs', view_args);
+                            return;
+                        }
+
+                        // TODO Can global moderator ignore forum's permission?
+
+                        const ForumModeratorModel = db.getForumModeratorModel();
+
+                        const moderator = await ForumModeratorModel.findOne({
+                            where: {
+                                username: username,
+                                forum_name: name
                             }
+                        });
 
-                            const ForumModeratorModel = db.getForumModeratorModel();
-
-                                ForumModeratorModel.findOne({
-                                    where: {
-                                        username: request.is_auth,
-                                        forum_name: name
-                                    }
-                                })
-                                .then((value) => {
-                                    if(value === null) {
-                                        if(forum.user_mask[pex.forumBit.CREATE_POST] == '1')
-                                            reply.view('newPost.ejs', view_params);
-                                        else
-                                            reply.redirect('/f/' + name);
-                                    } else {
-                                        if(forum.moderator_mask[pex.forumBit.CREATE_POST] == '1')
-                                            reply.view('newPost.ejs', view_params);
-                                        else
-                                            reply.redirect('/f/' + name);
-                                    }
-                                }, (err) => {
-                                    console.log(err);
-                                    reply.redirect('/');
-                                });
-
+                        if (moderator === null) {
+                            // Normal user
+                            if (forum.user_mask[pex.forumBit.CREATE_POST] == '1')
+                                reply.view('newPost.ejs', view_args);
+                            else
+                                reply.redirect('/f/' + name);
                         } else {
-                            if(forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1')
-                                reply.view('newPost.ejs', view_params);
+                            // Moderator of this forum
+                            if (forum.moderator_mask[pex.forumBit.CREATE_POST] == '1')
+                                reply.view('newPost.ejs', view_args);
                             else
                                 reply.redirect('/f/' + name);
                         }
+
+                    } else {
+                        // Anonymous
+                        if (forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1')
+                            reply.view('newPost.ejs', view_args);
+                        else
+                            reply.redirect('/f/' + name);
                     }
-                }, (err) => {
-                    console.log(err);
+
+                } else {
+                    // Forum doesn't exists, redirect to home
                     reply.redirect('/');
-                });
+                }
+            } catch (err) {
+                console.log(err);
+                reply.redirect('/');
+            }
+
         } else {
             reply.redirect('/');
         }
 
     },
 
-    post: (request, reply) => {
+    post: async (request, reply) => {
         const name = request.query.f;
 
-        if(name.length > 0) { // if param is like /p?f= , f is an invalid empty string, so redirect user to home
+        if (name.length > 0) { // if param is like /p?f= , f is an invalid empty string, so redirect user to home
 
-            const view_params = request.view_params;
+            const view_args = request.view_args;
 
-            if(pex.isGlobalSet(request.user_global_group, pex.globalBit.REGISTER)) {
-                view_params.can_register = true;
-            }
+            if (!pex.isGlobalSet(request.user.global_group, pex.globalBit.VIEW_FORUM)) {
 
-            if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.VIEW_FORUM)) {
+                view_args.back = '/f/' + name;
+                view_args.ERROR = 'You must be logged to do that';
 
-                view_params.back = '/f/' + name;
-                view_params.ERROR = 'You must be logged to do that';
-
-                reply.view('login.ejs', view_params);
+                reply.view('login.ejs', view_args);
                 return;
             }
 
             const ForumModel = db.getForumModel();
 
-            ForumModel.findByPk(name, {attributes: ['creator', 'user_mask', 'moderator_mask']})
-                .then((forum) => {
-                    if(forum === null) {
-                        // Forum doesn't exists, redirect to home
-                        reply.redirect('/');
-                    } else {
+            try {
+                const forum = await ForumModel.findByPk(name, { attributes: ['creator', 'user_mask', 'moderator_mask'] });
 
-                        view_params.forum_name = name;
+                if (forum !== null) {
 
-                        const data = request.body;
+                    view_args.forum_name = name;
 
-                        if(request.is_auth) {
-                            
-                            if(forum.creator === request.is_auth) {
-                                data.title = data.title.trim();
-                                if(validator.isPostTitle(data.title)) {
-                                    data.description = data.description.trim();
+                    const data = request.body;
 
-                                    if(validator.isPostDescription(data.description)) {
-                                        const PostModel = db.getPostModel();
+                    data.title = data.title.trim();
+                    if (validator.isPostTitle(data.title)) {
+                        data.description = data.description.trim();
 
-                                        PostModel.create({forum_name: name, title: data.title, description: data.description, creator: request.is_auth})
-                                            .then(() => {
-                                                request.flash('info', 'Post created');
-                                                reply.redirect('/f/' + name);
-                                            }, (err) => {
-                                                console.log(err);
-                                                view_params.ERROR = 'An error has occured, retry later';
-                                                reply.view('newPost.ejs', view_params);
-                                            })
+                        if (validator.isPostDescription(data.description)) {
+
+                            let creator = null;
+
+                            if (request.user.username) {
+
+                                const username = request.user.username;
+
+                                creator = username;
+
+                                // TODO Can global moderator ignore forum's permission?
+
+                                // Is not administrator of this forum or the board's admin
+                                if (forum.creator !== username && request.user.global_group !== pex.GLOBAL_ADMIN) {
+                                    const ForumModeratorModel = db.getForumModeratorModel();
+
+                                    const moderator = await ForumModeratorModel.findOne({
+                                        where: {
+                                            username: username,
+                                            forum_name: name
+                                        }
+                                    });
+
+                                    if(moderator === null) {
+                                        // Normal user
+                                        if (forum.user_mask[pex.forumBit.CREATE_POST] != '1') {
+                                            reply.redirect('/f/' + name);
+                                            return;
+                                        }
+
                                     } else {
-                                        view_params.ERROR = 'Invalid description';
-                                        reply.view('newPost.ejs', view_params);
+                                        // Moderator of this forum
+                                        if (forum.moderator_mask[pex.forumBit.CREATE_POST] != '1') {
+                                            reply.redirect('/f/' + name);
+                                            return;
+                                        }
+
                                     }
-                                } else {
-                                    view_params.ERROR = 'Invalid title';
-                                    reply.view('newPost.ejs', view_params);
                                 }
-                                return;
+                            } else {
+                                if (forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1') {
+                                    creator = null;
+                                }
+                                else {
+                                    reply.redirect('/f/' + name);
+                                    return;
+                                }
                             }
 
-                            const ForumModeratorModel = db.getForumModeratorModel();
+                            const PostModel = db.getPostModel();
 
-                                ForumModeratorModel.findOne({
-                                    where: {
-                                        username: request.is_auth,
-                                        forum_name: name
-                                    }
-                                })
-                                .then((value) => {
-                                    if(value === null) {
-                                        if(forum.user_mask[pex.forumBit.CREATE_POST] == '1'){
-                                            data.title = data.title.trim();
-                                            if(validator.isPostTitle(data.title)) {
-                                                data.description = data.description.trim();
+                            await PostModel.create({ forum_name: name, title: data.title, description: data.description, creator: creator });
 
-                                                if(validator.isPostDescription(data.description)) {
-                                                    const PostModel = db.getPostModel();
+                            request.flash('info', 'Post created');
+                            reply.redirect('/f/' + name);
 
-                                                    PostModel.create({forum_name: name, title: data.title, description: data.description, creator: request.is_auth})
-                                                        .then(() => {
-                                                            reply.redirect('/f/' + name);
-                                                        }, (err) => {
-                                                            console.log(err);
-                                                            view_params.ERROR = 'An error has occured, retry later';
-                                                            reply.view('newPost.ejs', view_params);
-                                                        });
-                                                } else {
-                                                    view_params.ERROR = 'Invalid description';
-                                                    reply.view('newPost.ejs', view_params);
-                                                }
-                                            } else {
-                                                view_params.ERROR = 'Invalid title';
-                                                reply.view('newPost.ejs', view_params);
-                                            }
-                                        }
-                                        else
-                                            reply.redirect('/f/' + name);
-                                    } else {
-                                        if(forum.moderator_mask[pex.forumBit.CREATE_POST] == '1') {
-                                            data.title = data.title.trim();
-                                            if(validator.isPostTitle(data.title)) {
-                                                data.description = data.description.trim();
-
-                                                if(validator.isPostDescription(data.description)) {
-                                                    const PostModel = db.getPostModel();
-
-                                                    PostModel.create({forum_name: name, title: data.title, description: data.description, creator: request.is_auth})
-                                                        .then(() => {
-                                                            reply.redirect('/f/' + name);
-                                                        }, (err) => {
-                                                            console.log(err);
-                                                            view_params.ERROR = 'An error has occured, retry later';
-                                                            reply.view('newPost.ejs', view_params);
-                                                        });
-                                                } else {
-                                                    view_params.ERROR = 'Invalid description';
-                                                    reply.view('newPost.ejs', view_params);
-                                                }
-                                            } else {
-                                                view_params.ERROR = 'Invalid title';
-                                                reply.view('newPost.ejs', view_params);
-                                            }
-                                        }
-                                        else
-                                            reply.redirect('/f/' + name);
-                                    }
-                                }, (err) => {
-                                    console.log(err);
-                                    reply.redirect('/');
-                                });
 
                         } else {
-                            if(forum.user_mask[pex.forumBit.ANONYMOUS_POST] == '1') {
-                                data.title = data.title.trim();
-                                if(validator.isPostTitle(data.title)) {
-                                    data.description = data.description.trim();
-
-                                    if(validator.isPostDescription(data.description)) {
-                                        const PostModel = db.getPostModel();
-
-                                        PostModel.create({forum_name: name, title: data.title, description: data.description, creator: null})
-                                            .then(() => {
-                                                reply.redirect('/f/' + name);
-                                            }, (err) => {
-                                                console.log(err);
-                                                view_params.ERROR = 'An error has occured, retry later';
-                                                reply.view('newPost.ejs', view_params);
-                                            })
-                                    } else {
-                                        view_params.ERROR = 'Invalid description';
-                                        reply.view('newPost.ejs', view_params);
-                                    }
-                                } else {
-                                    view_params.ERROR = 'Invalid title';
-                                    reply.view('newPost.ejs', view_params);
-                                }
-                            }
-                            else
-                                reply.redirect('/f/' + name);
+                            view_args.ERROR = 'Invalid description';
+                            reply.view('newPost.ejs', view_args);
                         }
+                    } else {
+                        view_args.ERROR = 'Invalid title';
+                        reply.view('newPost.ejs', view_args);
                     }
-                }, (err) => {
-                    console.log(err);
+                } else {
+                    // Forum doesn't exists, redirect to home
                     reply.redirect('/');
-                });
+                }
+            } catch (err) {
+                console.log(err);
+                reply.redirect('/');
+            }
+
         } else {
             reply.redirect('/');
         }

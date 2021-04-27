@@ -1,11 +1,14 @@
 const homeController = require('../controllers/home.controller');
-const getMeHook = require('./hooks/getMeHook');
+const isAuthHook = require('./hooks/isAuthHook');
+const viewHook = require('./hooks/viewHook');
+const messageHook = require('./hooks/messageHook');
+const globalHook = require('./hooks/globalHook');
 
 module.exports = (app) => {
     app.route({
         method: 'GET',
         url: '/',
         handler: homeController.get,
-        onRequest: getMeHook 
+        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

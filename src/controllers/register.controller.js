@@ -5,32 +5,22 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
     get: (request, reply) => {
-        if(request.is_auth) // User is already authenticated
+        // User is already authenticated or doesn't have the permission to register
+        if(request.user.username || !pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
             reply.redirect('/');
-        else if (pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) { // Check if user has permission to register
-            request.view_params.can_register = true;
-            reply.view('register.ejs', request.view_params);
-        } else {
-            reply.redirect('/');
-        }
+        else
+            reply.view('register.ejs', request.view_args);
     },
 
     post: (request, reply) => {
 
-         // User is already authenticated
-        if(request.is_auth) {
+        // User is already authenticated or doesn't have the permission to register
+        if(request.user.username || !pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) {
             reply.redirect('/');
             return;
         }
 
-        // Check if user has permission to register
-        if(!pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) {
-            reply.redirect('/');
-            return;
-        }
-
-        const view_params = request.view_params;
-        view_params.can_register = true;
+        const view_args = request.view_args;
 
         const data = request.body;
         
@@ -46,8 +36,8 @@ module.exports = {
                     bcrypt.hash(data.password, 10, async (err, hash) => {
                         if(err) {
                             console.log(err);
-                            view_params.ERROR = 'An error has occured, retry later';
-                            reply.view('register.ejs', view_params);
+                            view_args.ERROR = 'An error has occured, retry later';
+                            reply.view('register.ejs', view_args);
                         } else {
                     
                             const UserModel = db.getUserModel();
@@ -62,23 +52,23 @@ module.exports = {
 
                             } catch(err) {
                                 console.log(err);
-                                view_params.ERROR = 'An error has occured, retry later';
-                                reply.view('register.ejs', view_params);
+                                view_args.ERROR = 'An error has occured, retry later';
+                                reply.view('register.ejs', view_args);
                             }
                         }
                     });
 
                 } else {
-                    view_params.ERROR = 'Invalid Username';
-                    reply.view('register.ejs', view_params);
+                    view_args.ERROR = 'Invalid Username';
+                    reply.view('register.ejs', view_args);
                 }
             } else {
-                view_params.ERROR = 'Invalid Password';
-                reply.view('register.ejs', view_params);    
+                view_args.ERROR = 'Invalid Password';
+                reply.view('register.ejs', view_args);    
             }
         } else {
-            view_params.ERROR = 'Invalid Email';
-            reply.view('register.ejs', view_params);
+            view_args.ERROR = 'Invalid Email';
+            reply.view('register.ejs', view_args);
         }
 
         

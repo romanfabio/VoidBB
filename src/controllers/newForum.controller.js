@@ -5,10 +5,9 @@ const {UniqueConstraintError} = require('sequelize');
 
 module.exports = {
     get: (request, reply) => {
-        if(pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM)) { //If CREATE_FORUM is set then REGISTER must be set
-
+        if(pex.isGlobalSet(request.user.global_group, pex.globalBit.CREATE_FORUM)) { //If CREATE_FORUM is set then REGISTER must be set
             // User must be registered, request.is_auth is always valid
-            reply.view('newForum.ejs', request.view_params);
+            reply.view('newForum.ejs', request.view_args);
         }
         else {
             reply.redirect('/');
@@ -17,13 +16,13 @@ module.exports = {
 
     post: async (request, reply) => {
 
-        if(!pex.isGlobalSet(request.user_global_group, pex.globalBit.CREATE_FORUM)) {
+        if(!pex.isGlobalSet(request.user.global_group, pex.globalBit.CREATE_FORUM)) {
             reply.redirect('/');
             return;
         }
 
         // User must be registered, request.is_auth is always valid
-        const view_params = request.view_params;
+        const view_args = request.view_args;
 
 
         const data = request.body;
@@ -38,24 +37,24 @@ module.exports = {
                 const ForumModel = db.getForumModel();
 
                 try {
-                    await ForumModel.create({name: data.name, description: data.description, creator: request.is_auth, user_mask: '0000000', moderator_mask: '00000000'});
+                    await ForumModel.create({name: data.name, description: data.description, creator: request.user.username, user_mask: '0000000', moderator_mask: '00000000'});
 
                     request.flash('info', 'Forum created');
                     reply.redirect('/f/' + data.name);
 
                 } catch(err) {
                     console.log(err);
-                    view_params.ERROR = 'An error has occured, retry later';
-                    reply.view('newForum.ejs', view_params);
+                    view_args.ERROR = 'An error has occured, retry later';
+                    reply.view('newForum.ejs', view_args);
                 }
                     
             } else {
-                view_params.ERROR = 'Invalid Description';
-                reply.view('newForum.ejs', view_params);
+                view_args.ERROR = 'Invalid Description';
+                reply.view('newForum.ejs', view_args);
             }
         } else {
-            view_params.ERROR = 'Invalid Name';
-            reply.view('newForum.ejs', view_params);
+            view_args.ERROR = 'Invalid Name';
+            reply.view('newForum.ejs', view_args);
         }
 
     }

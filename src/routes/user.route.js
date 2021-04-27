@@ -19,6 +19,6 @@ module.exports = (app) => {
             }
         },
         handler: viewUserController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

@@ -20,7 +20,7 @@ module.exports = (app) => {
             }
         },
         handler: viewPostController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -36,7 +36,7 @@ module.exports = (app) => {
             }
         },
         handler: newPostController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -60,6 +60,6 @@ module.exports = (app) => {
             }
         },
         handler: newPostController.post,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

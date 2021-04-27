@@ -9,6 +9,6 @@ module.exports = (app) => {
         method: 'GET',
         url: '/',
         handler: homeController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

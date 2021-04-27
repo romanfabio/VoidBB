@@ -9,7 +9,7 @@ module.exports = (app) => {
         method: 'GET',
         url: '/register',
         handler: registerController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -27,6 +27,6 @@ module.exports = (app) => {
             }
         },
         handler: registerController.post,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        prehandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

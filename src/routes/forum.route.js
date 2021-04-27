@@ -20,14 +20,14 @@ module.exports = (app) => {
             }
         },
         handler: viewForumController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
         method: 'GET',
         url: '/f',
         handler: newForumController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -44,6 +44,6 @@ module.exports = (app) => {
             }
         },
         handler: newForumController.post,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

@@ -6,6 +6,6 @@ module.exports = (app) => {
         method: 'GET',
         url: '/logout',
         handler: logoutController.get,
-        onRequest: isAuthHook
+        preHandler: isAuthHook
     });
 };

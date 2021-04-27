@@ -49,6 +49,8 @@ module.exports = {
                             return;
                         }
 
+                        // TODO Can global moderator ignore forum's permission?
+
                         const ForumModeratorModel = db.getForumModeratorModel();
 
                         const mod = await ForumModeratorModel.findOne({

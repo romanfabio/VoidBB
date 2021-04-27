@@ -9,7 +9,7 @@ module.exports = (app) => {
         method: 'GET',
         url: '/ap/general',
         handler: apGeneralController.get,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -25,6 +25,6 @@ module.exports = (app) => {
             }
         },
         handler: apGeneralController.post,
-        onRequest: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

@@ -24,6 +24,29 @@ module.exports = (app) => {
     });
 
     app.route({
+        method: 'POST',
+        url: '/p/:id',
+        schema: {
+            params: {
+                type: "object",
+                properties: {
+                    id: {type: "integer"}
+                },
+                required: ['id']
+            },
+            body: {
+                type: "object",
+                properties: {
+                    description: {type: 'string', nullable: false}
+                },
+                required: ['description']
+            }
+        },
+        handler: viewPostController.post,
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook]
+    });
+
+    app.route({
         method: 'GET',
         url: '/p',
         schema: {

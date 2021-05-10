@@ -35,6 +35,9 @@ module.exports = {
     },
     isPostDescription: (str) => {
         return str.length > 0;
+    },
+    isComment: (str) => {
+        return str.length > 0;
     }
 };
 

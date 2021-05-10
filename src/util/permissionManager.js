@@ -40,7 +40,10 @@ module.exports = {
     forumBit: {
         ANONYMOUS_POST: 0,
         CREATE_POST: 1,
-        DELETE_OWN_POST: 2
+        DELETE_OWN_POST: 2,
+        ANONYMOUS_COMMENT: 3,
+        CREATE_COMMENT: 4,
+        DELETE_OWN_COMMENT: 5
     }
 
 }

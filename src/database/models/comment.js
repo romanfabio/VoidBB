@@ -25,11 +25,6 @@ module.exports = async (sequelize) => {
                 key: 'id'
             }
         },
-        reply_order: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 1
-        },
         description: {
             type: DataTypes.TEXT,
             allowNull: false
@@ -53,5 +48,5 @@ module.exports = async (sequelize) => {
         timestamps: false
     });
 
-    await Comment.sync({force: true});
+    await Comment.sync();
 }

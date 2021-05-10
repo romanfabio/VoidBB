@@ -1,13 +1,25 @@
-<a href="/f/<%= forum_name %>"><%= forum_name %></a>
+<a href="/f/<%= post.forum_name %>"><%= post.forum_name %></a>
 
-<h2><%= title %></h2>
+<h2><%= post.title %></h2>
 
-<p><%= description %></p>
+<p><%= post.description %></p>
 
-<% if(creator === null) { %>
+<% if(post.creator === null) { %>
 <h5>Anonymous</h5>
 <% } else { %>
-<h5><a href="/u/<%= creator %>"><%= creator %></a></h5>
+<h5><a href="/u/<%= post.creator %>"><%= post.creator %></a></h5>
 <% }%>
 
-<p><%= created %></p>
+<p><%= post.created %></p>
+
+<% for(let i = 0; i < comments.length; i++) { %>
+    <h5><%= (comments[i].creator?comments[i].creator:"Anonymous") %></h5>
+    <p><%= comments[i].description %></p>
+<% } %>
+
+<% if(locals.can_comment) { %>
+<form action="/p/<%= post.id %>" method="POST">
+    <textarea name="description" id="description" cols="30" rows="10"></textarea>
+    <input type="submit" value="Comment">
+</form>
+<% } %>

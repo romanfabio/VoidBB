@@ -1,63 +1,60 @@
 const variable = require('../util/variableManager');
 const validator = require('../util/validator');
-const db = require('../database/db');
 const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: (request, reply) => {
-        if(request.user.global_group !== pex.GLOBAL_ADMIN) {
+    get: function (request, reply) {
+        if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
         } else {
-            request.view_args.board_name = variable.get('BOARD_NAME');
-            reply.view('apGeneral.ejs', request.view_args);
+            request.viewArgs.boardName = variable.get('BOARD_NAME');
+            reply.view('apGeneral.ejs', request.viewArgs);
         }
     },
 
-    post: async (request, reply) => {
+    post: async function (request, reply) {
 
-        if(request.user.global_group !== pex.GLOBAL_ADMIN) {
+        if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
             return;
         }
         
-        const view_args = request.view_args;
-        view_args.board_name = variable.get('BOARD_NAME');
+        const viewArgs = request.viewArgs;
+        viewArgs.boardName = variable.get('BOARD_NAME');
 
         const data = request.body;
 
-        data.board_name = data.board_name.trim();
+        data.boardName = data.boardName.trim();
 
-        if(data.board_name === variable.get('BOARD_NAME')) {
-            view_args.INFO = 'Settings saved';
-            reply.view('apGeneral.ejs', view_args);
+        if(data.boardName === variable.get('BOARD_NAME')) {
+            viewArgs.INFO = 'Settings saved';
+            reply.view('apGeneral.ejs', viewArgs);
             return;
         }
 
-        if(!validator.isBoardName(data.board_name)) {
-            view_args.ERROR = 'Invalid board name';
-            reply.view('apGeneral.ejs', view_args);
+        if(!validator.isBoardName(data.boardName)) {
+            viewArgs.ERROR = 'Invalid board name';
+            reply.view('apGeneral.ejs', viewArgs);
             return;
         }
 
-        const VariableModel = db.getVariableModel();
 
         try {
-            await VariableModel.update({value: data.board_name}, {where: {key: 'BOARD_NAME'}});
-            const success = await variable.reload();
+            await this.database.update_Value_Of_Variables_By_Key('BOARD_NAME', data.boardName);
 
-            if(success) {
-                view_args.INFO = 'Settings saved';
-                view_args.board_name = variable.get('BOARD_NAME');
-            } else 
-                view_args.ERROR = 'An error has occured, retry later';
+            await variable.reload(this.database);
 
-        } catch(err) {
-            console.log(err);
-            view_args.ERROR = 'An error has occured, retry later';
+            viewArgs.INFO = 'Settings saved';
+            viewArgs.BOARD_NAME = variable.get('BOARD_NAME');
+            viewArgs.boardName = variable.get('BOARD_NAME');
+
+        } catch(e) {
+            console.error(e);
+            viewArgs.ERROR = 'An error has occured, retry later';
         }
 
         
-        reply.view('apGeneral.ejs', view_args);
+        reply.view('apGeneral.ejs', viewArgs);
 
     }
 }

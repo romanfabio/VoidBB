@@ -1,24 +1,18 @@
-const db = require('../database/db');
-
 const globalMasks = new Map();
 
 module.exports = {
-    reload: () => {
-        const globalGroupModel = db.getGlobalGroupModel();
+    reload: async (database) => {
 
-        globalGroupModel.findAll({attributes: ['id','mask'], order: [['id','ASC']]}).then((groups) => {
-            if(groups.length === 4) {
-                globalMasks.clear();
-                for(let i = 0; i < groups.length; i++) {
-                    globalMasks.set(groups[i].id, groups[i].mask);
-                }
-            } else {
-                console.log('Can\'t reload global permissions: Global group quantity is not 4');
+        const groups = await database.find_Id_Mask_Of_GlobalGroups_OrderBy_Id_Asc();
+
+        if (groups.length === 4) {
+            globalMasks.clear();
+            for (let i = 0; i < groups.length; i++) {
+                globalMasks.set(groups[i].id, groups[i].mask);
             }
-        }, (err) => {
-            console.log('Can\'t reload global permissions');
-            console.log(err);
-        });
+        } else {
+            throw new Error('Can\'t reload global permissions: Global group quantity is not 4');
+        }
     },
 
     GLOBAL_ANONYMOUS: 0,
@@ -33,8 +27,8 @@ module.exports = {
         VIEW_USER: 3
     },
 
-    isGlobalSet: (group_id, bit) => {
-        return globalMasks.get(group_id)[bit] == '1';
+    isGlobalSet: (groupId, bit) => {
+        return globalMasks.get(groupId)[bit] == '1';
     },
 
     forumBit: {

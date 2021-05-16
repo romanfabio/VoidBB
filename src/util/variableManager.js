@@ -1,31 +1,19 @@
-const db = require('../database/db');
-
 const map = new Map();
 
 module.exports = {
-    reload: async () => {
-        const variableModel = db.getVariableModel();
+    reload: async (database) => {
 
-        try {
-            const vars = await variableModel.findAll();
+        const vars = await database.findAllVariables();
 
-            map.clear();
+        map.clear();
 
-            for(let i = 0; i < vars.length; i++) {
-                let elem = vars[i];
-                if(elem.isInt && elem.value != null)
-                    elem.value = parseInt(elem.value);
-                map.set(elem.key, elem.value);
-            }
-
-            console.log(map);
-
-            return true;
-        } catch(err) {
-            console.log('Can\'t reload global variables');
-            console.log(err);
-            return false;
+        for (let i = 0; i < vars.length; i++) {
+            let elem = vars[i];
+            if (elem.isInt && elem.value != null)
+                elem.value = parseInt(elem.value);
+            map.set(elem.key, elem.value);
         }
+
     },
 
     get: (key) => map.get(key)

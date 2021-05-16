@@ -1,52 +1,39 @@
 const pex = require('../../util/permissionManager');
-const db = require('../../database/db');
-const cache = require('../../util/cache');
 
 /*
     Require
         - isAuth Hook
         - view Hook
     Always
-        - request.user.global_group : number = <user's global group id>
+        - request.user.globalGroup : number = <user's global group id>
     Admin
-        - request.view_args.AP = true
+        - request.viewArgs.AP = true
 */
-module.exports = async (request, reply) => {
+module.exports = async function (request, reply) {
     console.log('Global Hook');
 
     if (!request.user.username) {
-        request.user.global_group = pex.GLOBAL_ANONYMOUS;
+        request.user.globalGroup = pex.GLOBAL_ANONYMOUS;
     } else {
-        const username = request.user.username;
 
-        const cached = cache.global_group(username);
-        if (cached) {
-            request.user.global_group = cached;
-        } else {
+        try {
+            const group = await this.database.find_GlobalGroup_Of_Users_By_Username(request.user.username);
 
-            const UserModel = db.getUserModel();
-
-            try {
-                const user = await UserModel.findByPk(username, { attributes: ['global_group'] });
-
-                if (user !== null) {
-                    request.user.global_group = user.global_group;
-                    cache.invalidate_global_group(username, user.global_group);
-                } else {
-                    request.user.global_group = pex.GLOBAL_ANONYMOUS;
-                    request.session.delete();
-                }
-            } catch (err) {
-                console.log(err);
-                request.user.global_group = pex.GLOBAL_ANONYMOUS;
+            if(group !== null)
+                request.user.globalGroup = group.globalGroup;
+            else {
+                request.user.globalGroup = pex.GLOBAL_ANONYMOUS;
+                request.session.delete();
             }
-
+        } catch(e) {
+            console.error(e);
+            request.user.globalGroup = pex.GLOBAL_ANONYMOUS;
         }
     }
 
-    if (request.user.global_group === pex.GLOBAL_ADMIN)
-        request.view_args.AP = true;
-    if (pex.isGlobalSet(request.user.global_group, pex.globalBit.REGISTER))
-        request.view_args.CAN_REGISTER = true;
+    if (request.user.globalGroup === pex.GLOBAL_ADMIN)
+        request.viewArgs.AP = true;
+    if (pex.isGlobalSet(request.user.globalGroup, pex.globalBit.REGISTER))
+        request.viewArgs.CAN_REGISTER = true;
 
 };

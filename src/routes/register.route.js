@@ -27,6 +27,6 @@ module.exports = (app) => {
             }
         },
         handler: registerController.post,
-        prehandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

@@ -18,16 +18,16 @@
   "homepage": "https://github.com/romanfabio/VoidBB#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "dotenv": "^9.0.2",
     "ejs": "^3.1.6",
     "fastify": "^3.14.0",
     "fastify-flash": "^2.0.2",
     "fastify-formbody": "^5.0.0",
     "fastify-secure-session": "^2.3.1",
     "fastify-static": "^4.0.1",
+    "knex": "^0.95.4",
     "pg": "^8.5.1",
-    "pg-hstore": "^2.3.3",
     "point-of-view": "^4.14.0",
-    "sequelize": "^6.6.2",
     "validator": "^13.5.2"
   },
   "devDependencies": {

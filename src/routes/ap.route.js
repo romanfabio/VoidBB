@@ -21,7 +21,7 @@ module.exports = (app) => {
                 properties: {
                     board_name: {type: 'string', nullable: false}
                 },
-                required: ['board_name']
+                required: ['boardName']
             }
         },
         handler: apGeneralController.post,

@@ -1,51 +1,68 @@
-const fastify = require('fastify');
+require('dotenv').config();
+const PORT = process.env.BOARD_PORT || 3000;
+
+const fastify = require('fastify')({ logger: false });
 const fs = require('fs');
 const path = require('path');
 const routes = require('./src/routes/routes');
-const port = process.env.PORT || 3000;
-const db = require('./src/database/db');
 const pex = require('./src/util/permissionManager');
+const variableManager = require('./src/util/variableManager');
 
-db.init().then(() => {
-    const variableManager = require('./src/util/variableManager');
-    variableManager.reload();
-    pex.reload();
-});
+(async function () {
 
-let app = fastify({logger: false});
+    fastify.register(require('fastify-formbody'));
 
-app.register(require('fastify-formbody'));
+    fastify.register(require('fastify-secure-session'), {
+        cookieName: 'voidbb',
+        key: fs.readFileSync(path.join(__dirname, 'secret-key')),
+        cookie: {
+            path: '/'
+        }
+    });
 
-app.register(require('fastify-secure-session'), {
-    cookieName: 'voidbb',
+    fastify.register(require('fastify-flash'));
 
-    key: fs.readFileSync(path.join(__dirname, 'secret-key')),
-    cookie: {
-        path: '/'
+    fastify.register(require('fastify-static'), {
+        root: path.join(__dirname, 'public'),
+        prefix: '/'
+    });
+
+    fastify.register(require('point-of-view'), {
+        engine: {
+            ejs: require('ejs')
+        },
+        root: path.join(__dirname, 'src/views'),
+        layout: 'layouts/default.ejs'
+    });
+
+
+    let database = null;
+
+    if (process.env.DB_DRIVER === 'pg') {
+        database = require('./src/database/pg');
     }
-});
 
-app.register(require('fastify-flash'));
+    try {
+        await database.connect();
+        variableManager.reload(database);
+        pex.reload(database);
+    } catch (e) {
+        console.error(e);
+        process.exit(1);
+    }
+
+    fastify.decorate('database', database);
+
+    routes(fastify);
+
+    fastify.listen(PORT, err => {
+        if (err) {
+            console.log(err.message);
+            process.exit(1);
+        }
+        else
+            console.log('Server running on port ' + PORT);
+    });
 
 
-app.register(require('fastify-static'), {
-    root: path.join(__dirname, 'public'),
-    prefix: '/'
-});
-
-app.register(require('point-of-view'), {
-    engine: {
-        ejs: require('ejs')
-    },
-    root: path.join(__dirname, 'src/views'),
-    layout: 'layouts/default.ejs'
-});
-
-
-routes(app);
-
-app.listen(port, err => {
-    if(err)
-        console.log(err.message);
-    console.log('Server running on port ' + port);
-});
+})();

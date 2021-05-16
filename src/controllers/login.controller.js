@@ -1,17 +1,15 @@
-const db = require('../database/db');
 const bcrypt = require('bcrypt');
-const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: (request, reply) => {
+    get: function (request, reply) {
         if(request.user.username) // User is already authenticated
             reply.redirect('/');
         else 
-            reply.view('login.ejs', request.view_args);
+            reply.view('login.ejs', request.viewArgs);
 
     },
 
-    post: async (request, reply) => {
+    post: async function (request, reply) {
 
         // User is already authenticated
         if(request.user.username) {
@@ -19,7 +17,7 @@ module.exports = {
             return;
         }
 
-        const view_args = request.view_args;
+        const viewArgs = request.viewArgs;
 
         const data = request.body;
 
@@ -27,45 +25,36 @@ module.exports = {
         data.username = data.username.trim();
         data.password = data.password.trim();
 
-        const UserModel = db.getUserModel();
-
         try {
-            const user = await UserModel.findByPk(data.username, {attributes: ['password']});
+            const user = await this.database.find_Password_Of_Users_By_Username(data.username);
 
             if(user !== null) {
 
                 // Check password
-                bcrypt.compare(data.password, user.password, (err, match) => {
-                    if(err) {
-                        console.log(err);
-                        view_args.ERROR = 'An error has occured, retry later';
-                        reply.view('login.ejs', view_args);
-                    } else {
-                        if(match) {
-                            request.session.set('username', data.username);
+                const match = await bcrypt.compare(data.password, user.password);
 
-                            // If user was redirected here from another page, redirect him to the previous page
-                            if(data.back)
-                                reply.redirect(data.back);
-                            else
-                                reply.redirect('/');
-                            
-                        } else { // Passwords don't match
-                            view_args.ERROR = 'Username and/or password invalid';
-                            reply.view('login.ejs', view_args);
-                        }
-                    }
-                });
+                if(match) {
+                    request.session.set('user', data.username);
+
+                    // If user was redirected here from another page, redirect him to the previous page
+                    if(data.back)
+                        reply.redirect(data.back);
+                    else
+                        reply.redirect('/');
+                } else { // Passwords don't match
+                    viewArgs.ERROR = 'Username and/or password invalid';
+                    reply.view('login.ejs', viewArgs);
+                }
 
             } else { // Username doesn't exist
-                view_args.ERROR = 'Username and/or password invalid';
-                reply.view('login.ejs', view_args);
+                viewArgs.ERROR = 'Username and/or password invalid';
+                reply.view('login.ejs', viewArgs);
             }
 
-        } catch(err) {
-            console.log(err);
-            view_args.ERROR = 'An error has occured, retry later';
-            reply.view('login.ejs', view_args);
+        } catch(e) {
+            console.error(e);
+            viewArgs.ERROR = 'An error has occured, retry later';
+            reply.view('login.ejs', viewArgs);
         }
         
     }

@@ -1,18 +1,18 @@
-const db = require('../database/db');
 const bcrypt = require('bcrypt');
 const validator = require('../util/validator');
 const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: (request, reply) => {
+    get: function (request, reply) {
+        console.log(request.user);
         // User is already authenticated or doesn't have the permission to register
         if(request.user.username || !pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
             reply.redirect('/');
         else
-            reply.view('register.ejs', request.view_args);
+            reply.view('register.ejs', request.viewArgs);
     },
 
-    post: (request, reply) => {
+    post: async function (request, reply) {
 
         // User is already authenticated or doesn't have the permission to register
         if(request.user.username || !pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER)) {
@@ -20,7 +20,7 @@ module.exports = {
             return;
         }
 
-        const view_args = request.view_args;
+        const viewArgs = request.viewArgs;
 
         const data = request.body;
         
@@ -33,45 +33,31 @@ module.exports = {
                 data.username = data.username.trim();
                 if(validator.isUsername(data.username)) {
 
-                    bcrypt.hash(data.password, 10, async (err, hash) => {
-                        if(err) {
-                            console.log(err);
-                            view_args.ERROR = 'An error has occured, retry later';
-                            reply.view('register.ejs', view_args);
-                        } else {
-                    
-                            const UserModel = db.getUserModel();
+                    try {
+                        const hash = await bcrypt.hash(data.password, 10);
 
-                            try {
+                        await this.database.insertUser(data.username, hash, data.email, pex.GLOBAL_USER);
 
-                                await UserModel.create({username: data.username, password: hash, email: data.email, global_group: pex.GLOBAL_USER});
-
-                                request.session.set('username', data.username);
-                                request.flash('info', 'Registration completed');
-                                reply.redirect('/');
-
-                            } catch(err) {
-                                console.log(err);
-                                view_args.ERROR = 'An error has occured, retry later';
-                                reply.view('register.ejs', view_args);
-                            }
-                        }
-                    });
+                        request.session.set('user', data.username);
+                        request.flash('info', 'Registration completed');
+                        reply.redirect('/');
+                    } catch(e) {
+                        console.error(e);
+                        viewArgs.ERROR = 'An error has occured, retry later';
+                        reply.view('register.ejs', viewArgs);
+                    }
 
                 } else {
-                    view_args.ERROR = 'Invalid Username';
-                    reply.view('register.ejs', view_args);
+                    viewArgs.ERROR = 'Invalid Username';
+                    reply.view('register.ejs', viewArgs);
                 }
             } else {
-                view_args.ERROR = 'Invalid Password';
-                reply.view('register.ejs', view_args);    
+                viewArgs.ERROR = 'Invalid Password';
+                reply.view('register.ejs', viewArgs);    
             }
         } else {
-            view_args.ERROR = 'Invalid Email';
-            reply.view('register.ejs', view_args);
+            viewArgs.ERROR = 'Invalid Email';
+            reply.view('register.ejs', viewArgs);
         }
-
-        
-
     }
 }

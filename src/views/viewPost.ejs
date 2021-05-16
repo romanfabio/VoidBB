@@ -1,4 +1,4 @@
-<a href="/f/<%= post.forum_name %>"><%= post.forum_name %></a>
+<a href="/f/<%= post.forumName %>"><%= post.forumName %></a>
 
 <h2><%= post.title %></h2>
 
@@ -17,7 +17,7 @@
     <p><%= comments[i].description %></p>
 <% } %>
 
-<% if(locals.can_comment) { %>
+<% if(locals.canComment) { %>
 <form action="/p/<%= post.id %>" method="POST">
     <textarea name="description" id="description" cols="30" rows="10"></textarea>
     <input type="submit" value="Comment">

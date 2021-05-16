@@ -7,7 +7,7 @@
 module.exports = (request, reply, done) => {
     console.log('isAuth Hook');
 
-    const username = request.session.get('username');
+    const username = request.session.get('user');
 
     request.user = {};
 

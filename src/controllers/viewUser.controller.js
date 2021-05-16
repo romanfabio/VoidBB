@@ -1,38 +1,36 @@
-const db = require('../database/db');
 const pex = require('../util/permissionManager');
 
 module.exports = {
 
-    get: async (request, reply) => {
+    get: async function(request, reply) {
         const username = request.params.username;
 
         if(username.length > 0) {
 
-            const view_args = request.view_args;
+            const viewArgs = request.viewArgs;
 
-            if(!pex.isGlobalSet(request.user.global_group, pex.globalBit.VIEW_USER)) {
+            if(!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_USER)) {
 
-                view_args.back = '/u/' + username;
-                view_args.ERROR = 'You must be logged to do that';
+                viewArgs.back = '/u/' + username;
+                viewArgs.ERROR = 'You must be logged to do that';
 
-                reply.view('login.ejs', view_args);
+                reply.view('login.ejs', viewArgs);
                 return;
 
             }
 
-            const UserModel = db.getUserModel();
-
             try {
-                const user = await UserModel.findByPk(username, {attributes: ['username', 'email']});
+                const user = await this.database.find_Email_Of_User_By_Username(username);
 
                 if(user !== null) {
-                    view_args.user = {username: user.username, email: user.email};
-                    reply.view('viewUser.ejs', view_args);
+                    viewArgs.user = {username: username, email: user.email};
+                    reply.view('viewUser.ejs', viewArgs);
                 } else {
+                    //User doesn't exists, redirect to home
                     reply.redirect('/');
                 }
-            } catch(err) {
-                console.log(err);
+            } catch(e) {
+                console.error(e);
                 reply.redirect('/');
             }
 

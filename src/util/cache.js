@@ -1,34 +1,34 @@
-const global_group = new Map(); // Key => username;  // Value => global group id
+const globalGroup = new Map(); // Key => username;  // Value => global group id
 
 const forum = new Map(); // Key => forum's name;    // Value => {creator, user_mask, moderator_mask}
 
 module.exports = {
 
-    global_group: (username) => {
-        return global_group.get(username);
+    globalGroup: (username) => {
+        return globalGroup.get(username);
     },
 
-    invalidate_global_group: (username, value) => {
+    invalidateGlobalGroup: (username, value) => {
         if(username) {
             if(value)
-                global_group.set(username, value);
+                globalGroup.set(username, value);
             else
-                global_group.delete(username);
+                globalGroup.delete(username);
         }
         else
-            global_group.clear();
+            globalGroup.clear();
     },
 
-    forum: (forum_name) => {
-        return forum.get(forum_name);
+    forum: (forumName) => {
+        return forum.get(forumName);
     },
 
-    invalidate_forum: (forum_name, value) => {
-        if(forum_name) {
+    invalidateForum: (forumName, value) => {
+        if(forumName) {
             if(value)
-                forum.set(forum_name, value);
+                forum.set(forumName, value);
             else
-                forum.delete(forum_name);
+                forum.delete(forumName);
         }
         else
             forum.clear();

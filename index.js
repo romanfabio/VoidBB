@@ -14,7 +14,7 @@ const variableManager = require('./src/util/variableManager');
 
     fastify.register(require('fastify-secure-session'), {
         cookieName: 'voidbb',
-        key: fs.readFileSync(path.join(__dirname, 'secret-key')),
+        secret: process.env.SECRET,
         cookie: {
             path: '/'
         }

@@ -1,48 +1,17 @@
-const pg = require('pg');
+const {randomInt} = require('crypto');
+console.log(generateSecureString(64).length);
 
-const TABLE_VARIABLES = 'CREATE TABLE Variables (key VARCHAR(32) NOT NULL, value VARCHAR(255), isInt BOOLEAN NOT NULL DEFAULT false, PRIMARY KEY(key))';
-const TABLE_GLOBAL_GROUPS = 'CREATE TABLE GlobalGroups (id INTEGER NOT NULL, name VARCHAR(32) NOT NULL, mask VARCHAR(255) NOT NULL, PRIMARY KEY(id))';
-const TABLE_USERS = 'CREATE TABLE Users (username VARCHAR(32) NOT NULL, password VARCHAR(60) NOT NULL, email VARCHAR(128) NOT NULL, globalGroup INTEGER NOT NULL REFERENCES GlobalGroups(id), PRIMARY KEY(username))';
-const TABLE_FORUMS = 'CREATE TABLE Forums (name VARCHAR(32) NOT NULL, description VARCHAR(255) NOT NULL, creator VARCHAR(32) NOT NULL REFERENCES Users(username), userMask VARCHAR(255) NOT NULL, moderatorMask VARCHAR(255) NOT NULL, PRIMARY KEY(name))';
-const TABLE_FORUM_MODERATORS = 'CREATE TABLE ForumModerators (username VARCHAR(32) NOT NULL REFERENCES Users(username), forumName VARCHAR(32) NOT NULL REFERENCES Forums(name), PRIMARY KEY(username, forumName))';
-const TABLE_POSTS = 'CREATE TABLE Posts (id BIGSERIAL NOT NULL, forumName VARCHAR(32) NOT NULL REFERENCES Forums(name), title VARCHAR(255) NOT NULL, description TEXT NOT NULL, creator VARCHAR(32) REFERENCES Users(username), created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), PRIMARY KEY(id))';
-const TABLE_COMMENTS = 'CREATE TABLE Comments (id BIGSERIAL NOT NULL, postId BIGINT NOT NULL REFERENCES Posts(id), reply BIGINT REFERENCES Comments(id), description TEXT NOT NULL, creator VARCHAR(32) REFERENCES Users(username), created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), PRIMARY KEY(id))';
 
-const client = new pg.Client({
-    user: 'voidbbuser',
-    host: 'localhost',
-    database: 'voidbb',
-    password: 'voidbbuser',
-    port: 5432,
-});
 
-let methods = {
-    connect: async () => {
-        await client.connect();
-    },
 
-    create: async () => {
-        /*await client.query(TABLE_VARIABLES);
-        await client.query(TABLE_GLOBAL_GROUPS);
-        await client.query(TABLE_USERS);
-        await client.query(TABLE_FORUMS);
-        await client.query(TABLE_FORUM_MODERATORS);
-        await client.query(TABLE_POSTS);
-        await client.query(TABLE_COMMENTS);*/
-    },
 
-    findAllVariables: async () => {
-        const result = await client.query('SELECT * FROM Variables');
 
-        return result.rows;
+function generateSecureString(length) {
+    const buffer = ['7','X','R','b','r','t','l','f','q','Q','S','8','v','h','s','o','d','5','K','R','y','g','A','S','H','G','5','O','A','F','T','k','j','x','O','W','o','O','6','V','B','R','S','7','4','a','2','o','q','k','r','P','J','b','g','P','A','c','Z','T','8','p','R','M','0','z','C','c','8','K','N','J','v','p','T','8','8','T','g','V','1','d','E','a','I','O','H','0','1','B','a','z','1','o','a','A','m','E','a','k'];
+    let result = "";
+    while(result.length < length) {
+        result += buffer[randomInt(buffer.length)];
     }
-};
 
-methods.connect().then(() => {
-    return methods.create()
-}).then(() => {
-    return methods.findAllVariables();
-}).then((data) => {console.log(data)}).catch((err) => {
-    console.log('Error');
-    console.error(err);
-})
+    return result;
+}

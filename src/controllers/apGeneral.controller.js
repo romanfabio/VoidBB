@@ -7,8 +7,13 @@ module.exports = {
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
         } else {
-            request.viewArgs.boardName = variable.get('BOARD_NAME');
-            reply.view('apGeneral.ejs', request.viewArgs);
+            const ap = request.session.get('ap');
+            if(ap) {
+                request.viewArgs.boardName = variable.get('BOARD_NAME');
+                reply.view('apGeneral.ejs', request.viewArgs);
+            } else {
+                reply.redirect('/ap');
+            }
         }
     },
 
@@ -16,6 +21,13 @@ module.exports = {
 
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
+            return;
+        }
+
+        const ap = request.session.get('ap');
+
+        if(!ap) {
+            reply.redirect('/ap');
             return;
         }
         

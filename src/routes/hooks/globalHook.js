@@ -7,6 +7,8 @@ const pex = require('../../util/permissionManager');
     Always
         - request.user.globalGroup : number = <user's global group id>
     Admin
+        - request.viewArgs.CAN_AP = true
+    Admin already logged in Admin Panel
         - request.viewArgs.AP = true
 */
 module.exports = async function (request, reply) {
@@ -31,8 +33,19 @@ module.exports = async function (request, reply) {
         }
     }
 
-    if (request.user.globalGroup === pex.GLOBAL_ADMIN)
-        request.viewArgs.AP = true;
+    if (request.user.globalGroup === pex.GLOBAL_ADMIN) {
+        console.log(request.url);
+        const ap = request.session.get('ap');
+        if(ap) {
+            if(!request.url.startsWith('/ap/')) {
+                request.session.set('ap', false);
+                request.viewArgs.CAN_AP = true;
+            } else
+                request.viewArgs.AP = true;
+        }
+        else
+            request.viewArgs.CAN_AP = true;
+    }
     if (pex.isGlobalSet(request.user.globalGroup, pex.globalBit.REGISTER))
         request.viewArgs.CAN_REGISTER = true;
 

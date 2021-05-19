@@ -1,4 +1,5 @@
 const apGeneralController = require('../controllers/apGeneral.controller');
+const apLoginController = require('../controllers/apLogin.controller');
 const isAuthHook = require('./hooks/isAuthHook');
 const viewHook = require('./hooks/viewHook');
 const messageHook = require('./hooks/messageHook');
@@ -25,6 +26,30 @@ module.exports = (app) => {
             }
         },
         handler: apGeneralController.post,
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+    });
+
+    app.route({
+        method: 'GET',
+        url: '/ap',
+        handler: apLoginController.get,
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+    });
+
+    app.route({
+        method: 'POST',
+        url: '/ap',
+        schema: {
+            body: {
+                type: "object",
+                properties: {
+                    username: {type: 'string', nullable: false},
+                    password: {type: 'string', nullable: false}
+                },
+                required: ['password']
+            }
+        },
+        handler: apLoginController.post,
         preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

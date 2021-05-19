@@ -19,6 +19,7 @@
         </header>
         <nav>
             <ul id="menu">
+                <% if(!locals.AP) { %>
                 <li class="menu-item left"><a href="/">Home</a></li>
                 <% if(!locals.USERNAME) { %>
                 <% if(locals.CAN_REGISTER) { %>
@@ -28,9 +29,13 @@
                 <% } else { %>
                 <li class="menu-item right"><a href="/logout">Logout</a></li>
                 <li class="menu-item right">Hello, <%= USERNAME %></li>
-                <% if(locals.AP) { %>
-                <li class="menu-item right"><a href="/ap/general">AP</a></li>
+                <% if(locals.CAN_AP) { %>
+                <li class="menu-item right"><a href="/ap">AP</a></li>
                 <% } %>
+                <% } %>
+                <% } else { %>
+                <li class="menu-item left"><a href="/ap/general">General</a></li>
+                <li class="menu-item right"><a href="/ap/logout">AP Logout</a></li>
                 <% } %>
             </ul>
         </nav>

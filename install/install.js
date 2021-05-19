@@ -273,7 +273,13 @@ function getInstalledDrivers() {
     let cmd = 'npm ls --json ';
     Object.keys(supportedDrivers).forEach(e => { cmd += e + ' ' });
 
-    const result = JSON.parse(execSync(cmd, { encoding: 'utf-8' }));
+    let result = null;
+
+    try{
+        result = JSON.parse(execSync(cmd, { encoding: 'utf-8' }));
+    }catch(e) {
+        result = {};
+    }
 
     const drivers = [];
 

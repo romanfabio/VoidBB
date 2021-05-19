@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
-const {randomInt} = require('crypto');
+const { randomInt } = require('crypto');
 
 const supportedDrivers = {
     'pg': { name: 'PostgreSQL', defaultPort: 5432 },
@@ -55,7 +55,7 @@ async function start() {
                         }
                     });
 
-                    if(option !== 'y') {
+                    if (option !== 'y') {
                         reconfigure = true;
                         break;
                     }
@@ -93,7 +93,7 @@ async function start() {
             }
         });
 
-        if(proceed !== 'y') {
+        if (proceed !== 'y') {
             console.log('Aborting...');
             process.exit(0);
         }
@@ -108,14 +108,14 @@ async function start() {
 
             console.log('Populating the tables...');
 
-            await db.init(boardName,fUsername,fPassword, fEmail);
+            await db.init(boardName, fUsername, fPassword, fEmail);
 
             console.log('Generating file .env...');
 
-            fs.writeFileSync(path.join(__dirname, '..', '.env'),`BOARD_PORT=${boardPort}${EOL}DB_DRIVER=${connParams.driver}${EOL}DB_HOST=${connParams.host}${EOL}DB_PORT=${connParams.port}${EOL}DB_NAME=${connParams.name}${EOL}DB_USER=${connParams.user}${EOL}DB_PASSWORD=${connParams.pass}${EOL}SECRET=${secret}`,{encoding: 'utf-8'});
+            fs.writeFileSync(path.join(__dirname, '..', '.env'), `BOARD_PORT=${boardPort}${EOL}DB_DRIVER=${connParams.driver}${EOL}DB_HOST=${connParams.host}${EOL}DB_PORT=${connParams.port}${EOL}DB_NAME=${connParams.name}${EOL}DB_USER=${connParams.user}${EOL}DB_PASSWORD=${connParams.pass}${EOL}SECRET=${secret}`, { encoding: 'utf-8' });
 
             await db.commit();
-        } catch(e) {
+        } catch (e) {
             console.log('An error occurred, retry again');
             console.log('Aborting...');
             await db.rollback();
@@ -123,7 +123,7 @@ async function start() {
         }
 
         console.log(`${EOL}*** INSTALLATION COMPLETED ***${EOL}`);
-        
+
         console.log(`Now you can type 'npm start' to start the board on port ${boardPort}`);
         console.log('If you have chosen a reserved port, you may need to run the command as sudo');
 
@@ -136,9 +136,9 @@ async function start() {
 }
 
 function generateSecureString(length) {
-    const buffer = ['7','X','R','b','r','t','l','f','q','Q','S','8','v','h','s','o','d','5','K','R','y','g','A','S','H','G','5','O','A','F','T','k','j','x','O','W','o','O','6','V','B','R','S','7','4','a','2','o','q','k','r','P','J','b','g','P','A','c','Z','T','8','p','R','M','0','z','C','c','8','K','N','J','v','p','T','8','8','T','g','V','1','d','E','a','I','O','H','0','1','B','a','z','1','o','a','A','m','E','a','k'];
+    const buffer = ['7', 'X', 'R', 'b', 'r', 't', 'l', 'f', 'q', 'Q', 'S', '8', 'v', 'h', 's', 'o', 'd', '5', 'K', 'R', 'y', 'g', 'A', 'S', 'H', 'G', '5', 'O', 'A', 'F', 'T', 'k', 'j', 'x', 'O', 'W', 'o', 'O', '6', 'V', 'B', 'R', 'S', '7', '4', 'a', '2', 'o', 'q', 'k', 'r', 'P', 'J', 'b', 'g', 'P', 'A', 'c', 'Z', 'T', '8', 'p', 'R', 'M', '0', 'z', 'C', 'c', '8', 'K', 'N', 'J', 'v', 'p', 'T', '8', '8', 'T', 'g', 'V', '1', 'd', 'E', 'a', 'I', 'O', 'H', '0', '1', 'B', 'a', 'z', '1', 'o', 'a', 'A', 'm', 'E', 'a', 'k'];
     let result = "";
-    while(result.length < length) {
+    while (result.length < length) {
         result += buffer[randomInt(buffer.length)];
     }
 
@@ -185,7 +185,7 @@ async function getFounderEmail() {
                 description: 'Founder\'s email',
                 type: 'string',
                 message: 'Invalid email',
-                conform: function(value) {return (value.length > 0 && value.length <= 128 )},
+                conform: function (value) { return (value.length > 0 && value.length <= 128) },
                 required: true
             }
         }
@@ -203,7 +203,7 @@ async function getFounderName() {
                 type: 'string',
                 pattern: /^[\x41-\x5A\x5F\x61-\x7A][\x30-\x39\x41-\x5A\x5F\x61-\x7A]*$/,
                 message: 'Invalid username. Can contain only ASCII letters and numbers. Must start with a letter.',
-                conform: function(value) {return (value.length > 0 && value.length <= 32 )},
+                conform: function (value) { return (value.length > 0 && value.length <= 32) },
                 required: true
             }
         }
@@ -277,10 +277,12 @@ function getInstalledDrivers() {
 
     const drivers = [];
 
-    Object.keys(supportedDrivers).forEach(e => {
-        if (result.dependencies[e])
-            drivers.push(e);
-    });
+    if (result.dependencies) {
+        Object.keys(supportedDrivers).forEach(e => {
+            if (result.dependencies[e])
+                drivers.push(e);
+        });
+    }
 
     return drivers;
 }
@@ -295,7 +297,7 @@ async function getDatabaseDriver() {
     }
 
     console.log('Found the following drivers:');
-    drivers.forEach(e => {console.log(' - ' + e)});
+    drivers.forEach(e => { console.log(' - ' + e) });
 
     console.log();
 

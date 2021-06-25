@@ -3,7 +3,7 @@ const map = new Map();
 module.exports = {
     reload: async (database) => {
 
-        const vars = await database.findAllVariables();
+        const vars = await database.select('*').from('Variables');
 
         map.clear();
 
@@ -18,3 +18,4 @@ module.exports = {
 
     get: (key) => map.get(key)
 }
+

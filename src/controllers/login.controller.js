@@ -25,13 +25,13 @@ module.exports = {
         data.username = data.username.trim();
         data.password = data.password.trim();
 
-        try {
-            const user = await this.database.find_Password_Of_Users_By_Username(data.username);
+        try { 
+            const user = await this.database.select('password').from('Users').where('username', data.username);
 
-            if(user !== null) {
+            if(user.length === 1) {
 
                 // Check password
-                const match = await bcrypt.compare(data.password, user.password);
+                const match = await bcrypt.compare(data.password, user[0].password);
 
                 if(match) {
                     request.session.set('user', data.username);

@@ -36,22 +36,26 @@ const variableManager = require('./src/util/variableManager');
     });
 
 
-    let database = null;
-
-    if (process.env.DB_DRIVER === 'pg') {
-        database = require('./src/database/pg');
-    }
+    const knex = require('knex')({
+        debug: true,
+        client: process.env.DB_DRIVER,
+        connection: {
+            host : process.env.DB_HOST,
+            user : process.env.DB_USER,
+            password : process.env.DB_PASSWORD,
+            database : process.env.DB_NAME
+        }
+    });
 
     try {
-        await database.connect();
-        variableManager.reload(database);
-        pex.reload(database);
+        await variableManager.reload(knex);
+        await pex.reload(knex);
     } catch (e) {
         console.error(e);
         process.exit(1);
     }
 
-    fastify.decorate('database', database);
+    fastify.decorate('database', knex);
 
     routes(fastify);
 

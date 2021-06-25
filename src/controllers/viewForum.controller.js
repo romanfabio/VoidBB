@@ -18,14 +18,17 @@ module.exports = {
             }
 
             try {
-                const forum = await this.database.find_Forum_By_Name(name);
+                let result = await this.database.select('*').from('Forums').where('name', name);
 
-                if(forum !== null) {
+                if(result.length === 1) {
 
-                    const posts = await this.database.findAllPosts_By_ForumName(name);
+                    const forum = result[0];
+
+                    result = await this.database.select('*').from('Posts').where('forumName', name);
+
+                    viewArgs.posts = result;
 
                     viewArgs.forumName = name;
-                    viewArgs.posts = posts;
                     viewArgs.styles = ['preview-list.css'];
 
                     if(request.user.username) {
@@ -38,10 +41,9 @@ module.exports = {
                         }
 
                         // TODO Can global moderator ignore forum's permission?
+                        result = await this.database.select('*').from('ForumModerators').where('username', request.user.username).andWhere('forumName', name);
 
-                        const mod = await this.database.find_ForumModerators_By_Username_ForumName(request.user.username, name);
-
-                        if(mod !== null) {
+                        if(result.length === 1) {
                             if(forum.moderatorMask[pex.forumBit.CREATE_POST] == '1')
                                 view_args.canCreatePost = true;
                         } else {

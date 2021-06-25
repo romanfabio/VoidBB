@@ -6,9 +6,7 @@ module.exports = {
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) // Only admins have access to the admin panel
             reply.redirect('/');
         else {
-            const ap = request.session.get('ap');
-
-            if(ap) {
+            if(request.user.ap) {
                 reply.redirect('/ap/general');
             } else {
                 reply.view('apLogin.ejs', request.viewArgs);
@@ -19,15 +17,12 @@ module.exports = {
 
     post: async function (request, reply) {
 
-        // User is already authenticated
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
             return;
         }
 
-        const ap = request.session.get('ap');
-
-        if(ap) {
+        if(request.user.ap) {
             reply.redirect('/ap/general');
             return;
         }
@@ -40,17 +35,16 @@ module.exports = {
         data.password = data.password.trim();
 
         try {
-            const user = await this.database.find_Password_Of_Users_By_Username(request.user.username);
+            const user = await this.database.select('password').from('Users').where('username', request.user.username);
 
-            if(user !== null) {
+            if(user.length === 1) {
 
                 // Check password
-                const match = await bcrypt.compare(data.password, user.password);
+                const match = await bcrypt.compare(data.password, user[0].password);
 
                 if(match) {
                     request.session.set('ap', true);
 
-                    // If user was redirected here from another page, redirect him to the previous page
                     reply.redirect('/ap/general');
                 } else { // Passwords don't match
                     viewArgs.ERROR = 'Password invalid';
@@ -70,7 +64,7 @@ module.exports = {
     },
 
     logout: async function(request,reply) {
-        if(request.user.username)
+        if(request.user.ap)
             request.session.set('ap', false);
         
         reply.redirect('/');

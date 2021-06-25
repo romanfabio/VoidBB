@@ -3,7 +3,7 @@ const globalMasks = new Map();
 module.exports = {
     reload: async (database) => {
 
-        const groups = await database.find_Id_Mask_Of_GlobalGroups_OrderBy_Id_Asc();
+        const groups = await database.select('id', 'mask').from('GlobalGroups').orderBy('id');
 
         if (groups.length === 4) {
             globalMasks.clear();

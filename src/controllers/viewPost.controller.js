@@ -17,24 +17,28 @@ module.exports = {
         }
 
         try {
-            const post = await this.database.find_Post_By_Id(id);
+            let result = await this.database.select('*').from('Posts').where('id', id);
 
-            if (post !== null) {
+            if (result.length === 1) {
+                const post = result[0];
+
                 viewArgs.post = post;
 
-                const comments = await this.database.findAllComments_By_PostId(post.id);
+                result = await this.database.select('*').from('Comments').where('postId', id);
 
-                viewArgs.comments = comments;
+                viewArgs.comments = result;
 
-                const forum = await this.database.find_Creator_UMask_MMask_Of_Forums_By_Name(post.forumName);
+                result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', post.forumName);
 
-                if(forum === null) {
+                if(result.length !== 1) {
                     // Forum doesn't exists, redirect to home
                     reply.redirect('/');
                     return;
                 }
 
-                const canComment = await canComment(request, this.database,forum, post);
+                const forum = result[0];
+
+                const canComment = await canCreateComment(request, this.database,forum, post);
 
                 if(canComment === null) {
                     reply.redirect('/');
@@ -78,24 +82,29 @@ module.exports = {
 
         try {
 
-            const post = await this.database.find_Post_By_Id(id);
+            let result = await this.database.select('*').from('Posts').where('id', id);
 
-            if(post !== null) {
+            if(result.length === 1) {
+
+                const post = result[0];
+
                 viewArgs.post = post;
 
-                const comments = await this.database.findAllComments_By_PostId(post.id);
+                result = await this.database.select('*').from('Comments').where('postId', id);
 
-                viewArgs.comments = comments;
+                viewArgs.comments = result;
 
-                const forum = await this.database.find_Creator_UMask_MMask_Of_Forums_By_Name(post.forumName);
+                result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', post.forumName);
 
-                if(forum === null) {
+                if(result.length !== 1) {
                     //Forum doesn't exists, redirect to home
                     reply.redirect('/');
                     return;
                 }
 
-                const canComment = await canComment(request, this.database,forum, post);
+                const forum = result[0];
+
+                const canComment = await canCreateComment(request, this.database,forum, post);
 
                 if(canComment === null) {
                     reply.redirect('/');
@@ -103,17 +112,16 @@ module.exports = {
                 }
 
                 if(canComment) {
-                    view_args.canComment = true;
+                    viewArgs.canComment = true;
                 } else {
-                    reply.view('viewPost.ejs', viewArgs);
+                    reply.redirect('/p/' + id);
                     return;
                 }
 
                 if(validator.isComment(data.description)) {
 
                     try {
-
-                        await this.database.insertComment(id,null,data.description, (request.user.username?request.user.username:null));
+                        await this.database('Comments').insert([{postId: id, reply: null,  description: data.description, creator: (request.user.username?request.user.username:null)}]);
                         
                         reply.redirect('/p/' + id);
                     } catch(e) {
@@ -140,7 +148,7 @@ module.exports = {
 /**
  * @returns true if user has permission to comment, otherwise return false. Return null if a database's error occurs.
  */
-async function canComment(request, database, forum, post) {
+async function canCreateComment(request, database, forum, post) {
 
     let result = false;
 
@@ -151,9 +159,9 @@ async function canComment(request, database, forum, post) {
         } else {
             try {
                 // TODO Can global moderator ignore forum's permission?
-                const mod = await database.find_ForumModerators_By_Username_ForumName(request.user.username, post.forumName);
+                const mod = await database.select('*').from('ForumModerators').where('username', request.user.username).andWhere('forumName', post.forumName);
 
-                if (mod !== null) {
+                if (mod.length === 1) {
                     if (forum.moderatorMask[pex.forumBit.CREATE_COMMENT] == '1')
                         result = true;
                 } else {

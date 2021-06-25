@@ -26,6 +26,7 @@
     "fastify-formbody": "^5.0.0",
     "fastify-secure-session": "^2.3.1",
     "fastify-static": "^4.2.0",
+    "knex": "^0.95.6",
     "mysql": "^2.18.1",
     "pg": "^8.6.0",
     "point-of-view": "^4.14.0",

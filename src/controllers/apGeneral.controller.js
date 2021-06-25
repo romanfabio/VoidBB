@@ -7,8 +7,8 @@ module.exports = {
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
         } else {
-            const ap = request.session.get('ap');
-            if(ap) {
+
+            if(request.user.ap) {
                 request.viewArgs.boardName = variable.get('BOARD_NAME');
                 reply.view('apGeneral.ejs', request.viewArgs);
             } else {
@@ -24,9 +24,7 @@ module.exports = {
             return;
         }
 
-        const ap = request.session.get('ap');
-
-        if(!ap) {
+        if(! request.user.ap) {
             reply.redirect('/ap');
             return;
         }
@@ -39,34 +37,32 @@ module.exports = {
         data.boardName = data.boardName.trim();
 
         if(data.boardName === variable.get('BOARD_NAME')) {
-            viewArgs.INFO = 'Settings saved';
-            reply.view('apGeneral.ejs', viewArgs);
+            request.flash('info','Settings saved');
+            reply.redirect('/ap/general');
             return;
         }
 
         if(!validator.isBoardName(data.boardName)) {
-            viewArgs.ERROR = 'Invalid board name';
-            reply.view('apGeneral.ejs', viewArgs);
+            request.flash('error','Invalid board name');
+            reply.redirect('/ap/general');
             return;
         }
 
 
         try {
-            await this.database.update_Value_Of_Variables_By_Key('BOARD_NAME', data.boardName);
+            await this.database('Variables').where('key', 'BOARD_NAME').update({value: data.boardName});
 
             await variable.reload(this.database);
 
-            viewArgs.INFO = 'Settings saved';
-            viewArgs.BOARD_NAME = variable.get('BOARD_NAME');
-            viewArgs.boardName = variable.get('BOARD_NAME');
+            request.flash('info','Settings saved');
+            reply.redirect('/ap/general');
 
         } catch(e) {
             console.error(e);
-            viewArgs.ERROR = 'An error has occured, retry later';
-        }
 
-        
-        reply.view('apGeneral.ejs', viewArgs);
+            request.flash('error','An error has occured, retry later');
+            reply.redirect('/ap/general');
+        }
 
     }
 }

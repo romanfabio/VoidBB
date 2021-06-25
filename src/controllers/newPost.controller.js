@@ -21,9 +21,10 @@ module.exports = {
 
             try {
 
-                const forum = await this.database.find_Creator_UMask_MMask_Of_Forums_By_Name(name);
+                let result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', name);
 
-                if (forum !== null) {
+                if (result.length === 1) {
+                    const forum = result[0];
 
                     viewArgs.forumName = name;
 
@@ -38,10 +39,9 @@ module.exports = {
                         }
 
                         // TODO Can global moderator ignore forum's permission?
+                        result = await this.database.select('*').from('ForumModerators').where('username',username).andWhere('forumName', name);
 
-                        const moderator = await this.database.find_ForumModerators_By_Username_ForumName(username, name);
-
-                        if (moderator === null) {
+                        if (result.length !== 1) {
                             // Normal user
                             if (forum.userMask[pex.forumBit.CREATE_POST] == '1')
                                 reply.view('newPost.ejs', viewArgs);
@@ -95,9 +95,10 @@ module.exports = {
             }
 
             try {
-                const forum = await this.database.find_Creator_UMask_MMask_Of_Forums_By_Name(name);
+                let result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', name);
 
-                if (forum !== null) {
+                if (result.length === 1) {
+                    const forum = result[0];
 
                     viewArgs.forumName = name;
 
@@ -121,9 +122,10 @@ module.exports = {
 
                                 // Is not administrator of this forum or the board's admin
                                 if (forum.creator !== username && request.user.globalGroup !== pex.GLOBAL_ADMIN) {
-                                    const moderator = await this.database.find_ForumModerators_By_Username_ForumName(username, name);
-
-                                    if(moderator === null) {
+                                    
+                                    result = await this.database.select('*').from('ForumModerators').where('username',username).andWhere('forumName', name);
+                                    
+                                    if(result.length !== 1) {
                                         // Normal user
                                         if (forum.userMask[pex.forumBit.CREATE_POST] != '1') {
                                             reply.redirect('/f/' + name);
@@ -149,7 +151,8 @@ module.exports = {
                                 }
                             }
 
-                            await this.database.insertPost(name, data.title, data.description, creator);
+                            
+                            await this.database('Posts').insert([{forumName: name, title: data.title, description: data.description, creator: creator}]);
 
                             request.flash('info', 'Post created');
                             reply.redirect('/f/' + name);

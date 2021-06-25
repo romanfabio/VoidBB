@@ -10,19 +10,20 @@ const pex = require('../../util/permissionManager');
         - request.viewArgs.CAN_AP = true
     Admin already logged in Admin Panel
         - request.viewArgs.AP = true
+        - request.user.ap = true
 */
 module.exports = async function (request, reply) {
-    console.log('Global Hook');
+    console.log('global Hook');
 
     if (!request.user.username) {
         request.user.globalGroup = pex.GLOBAL_ANONYMOUS;
     } else {
 
         try {
-            const group = await this.database.find_GlobalGroup_Of_Users_By_Username(request.user.username);
+            const group = await this.database.select('globalGroup').from('Users').where('username', request.user.username);
 
-            if(group !== null)
-                request.user.globalGroup = group.globalGroup;
+            if(group.length === 1)
+                request.user.globalGroup = group[0].globalGroup;
             else {
                 request.user.globalGroup = pex.GLOBAL_ANONYMOUS;
                 request.session.delete();
@@ -34,18 +35,21 @@ module.exports = async function (request, reply) {
     }
 
     if (request.user.globalGroup === pex.GLOBAL_ADMIN) {
-        console.log(request.url);
+
         const ap = request.session.get('ap');
         if(ap) {
             if(!request.url.startsWith('/ap/')) {
                 request.session.set('ap', false);
                 request.viewArgs.CAN_AP = true;
-            } else
+            } else {
                 request.viewArgs.AP = true;
+                request.user.ap = true;
+            }
         }
         else
             request.viewArgs.CAN_AP = true;
     }
+
     if (pex.isGlobalSet(request.user.globalGroup, pex.globalBit.REGISTER))
         request.viewArgs.CAN_REGISTER = true;
 

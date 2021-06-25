@@ -36,7 +36,7 @@ module.exports = {
                     try {
                         const hash = await bcrypt.hash(data.password, 10);
 
-                        await this.database.insertUser(data.username, hash, data.email, pex.GLOBAL_USER);
+                        await this.database('Users').insert([{username: data.username, password: hash, email: data.email, globalGroup: pex.GLOBAL_USER}]);
 
                         request.session.set('user', data.username);
                         request.flash('info', 'Registration completed');

@@ -20,10 +20,11 @@ module.exports = {
             }
 
             try {
-                const user = await this.database.find_Email_Of_User_By_Username(username);
 
-                if(user !== null) {
-                    viewArgs.user = {username: username, email: user.email};
+                let result = await this.database.select('email').from('Users').where('username', username);
+
+                if(result.length === 1) {
+                    viewArgs.user = {username: username, email: result[0].email};
                     reply.view('viewUser.ejs', viewArgs);
                 } else {
                     //User doesn't exists, redirect to home

@@ -38,7 +38,7 @@ module.exports = {
                 try {
                     const emptyMask = variable.get('EMPTY_MASK');
 
-                    await this.database.insertForum(data.name,data.description,request.user.username, emptyMask, emptyMask);
+                    await this.database('Forums').insert([{name: data.name, description: data.description, creator: request.user.username, userMask: emptyMask, moderatorMask: emptyMask}]);
 
                     request.flash('info', 'Forum created');
                     reply.redirect('/f/' + data.name);

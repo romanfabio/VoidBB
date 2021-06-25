@@ -10,7 +10,7 @@ module.exports = {
             viewArgs.canCreateForum = true;
 
         try {
-            const forums = await this.database.findAllForums();
+            const forums = await this.database.select('*').from('Forums');
 
             viewArgs.forums = forums;
         } catch(e) {

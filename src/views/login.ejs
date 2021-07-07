@@ -1,8 +1,17 @@
+<h1>Login</h1>
 <form method="POST" action="/login">
-    <% if (locals.back) { %>
+    <% if(locals.back) { %>
     <input type="hidden" name="back" value="<%= back %>">
     <% } %>
-    <input type="text" name="username" id="username" placeholder="username">
-    <input type="password" name="password" id="password" placeholder="password">
-    <input type="submit" value="Login">
+    <div class="p-1">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" class="form-control">
+    </div>
+    <div class="p-1">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" class="form-control">
+    </div>
+    <div class="p-1">
+        <button class="p-1 btn btn-primary">Login</button>
+    </div>
 </form>

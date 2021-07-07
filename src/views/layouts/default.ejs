@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= BOARD_NAME %></title>
-    <link rel="stylesheet" href="/stylesheets/default.css">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
     <% if(locals.styles) { %>
         <% for(let i = 0; i < styles.length; i++) { %>
             <link rel="stylesheet" href="/stylesheets/<%= styles[i] %>">
@@ -13,48 +13,56 @@
     <% } %>
 </head>
 <body>
-    <div id="page">
+    <div class="container px-5">
         <header>
-            <a href="/"><img id="header_logo" src="/images/logo.png"></a>
+            <a href="/"><img class="img-fluid mx-auto d-block" src="/images/logo.png"></a>
         </header>
-        <nav>
-            <ul id="menu">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
                 <% if(!locals.AP) { %>
-                <li class="menu-item left"><a href="/">Home</a></li>
-                <% if(!locals.USERNAME) { %>
-                <% if(locals.CAN_REGISTER) { %>
-                <li class="menu-item right"><a href="/register">Register</a></li>
-                <% } %>
-                <li class="menu-item right"><a href="/login">Login</a></li>
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <% if(!locals.USERNAME) { %>
+                            <% if(locals.CAN_REGISTER) { %>
+                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                            <% } %>
+                        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                        <% } else { %>
+                        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                        <li class="nav-item">Hello, <%= USERNAME %></li>
+                            <% if(locals.CAN_AP) { %>
+                        <li class="nav-item"><a class="nav-link" href="/ap">AP</a></li>
+                            <% } %>
+                        <% } %>
+                    </ul>
                 <% } else { %>
-                <li class="menu-item right"><a href="/logout">Logout</a></li>
-                <li class="menu-item right">Hello, <%= USERNAME %></li>
-                <% if(locals.CAN_AP) { %>
-                <li class="menu-item right"><a href="/ap">AP</a></li>
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="/ap/general">General</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/ap/pex">Permissions</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" href="/ap/logout">AP Logout</a></li>
+                    </ul>
                 <% } %>
-                <% } %>
-                <% } else { %>
-                <li class="menu-item left"><a href="/ap/general">General</a></li>
-                <li class="menu-item left"><a href="/ap/pex">Permissions</a></li>
-                <li class="menu-item right"><a href="/ap/logout">AP Logout</a></li>
-                <% } %>
-            </ul>
+            </div>
         </nav>
         <main>
-            <% if( locals.ERROR ) { %>
-            <div id="error-div">
-                <h5 id="error"><%= ERROR %></h5>
+            <div class="container">
+                <% if(locals.ERROR) { %>
+                <div class="alert alert-danger row"><%= ERROR %></div>
+                <% } %>
+                <% if(locals.INFO) { %>
+                <div class="alert alert-success row"><%= INFO %></div>
+                <% } %>
+                <div class="row">
+                <%- body %>
+                </div>
             </div>
-            <% } %>
-            <% if( locals.INFO ) { %>
-            <div id="info-div">
-                <h5 id="info"><%= INFO %></h5>
-            </div>
-            <% } %>
-            <%- body %>
         </main>
-        <footer>
-            <a href="https://github.com/romanfabio/VoidBB" target="_blank"><span id="copyright">&copy; VoidBB</span></a>
+        <footer class="mt-2">
+            <a href="https://github.com/romanfabio/VoidBB" target="_blank" class="text-center">&copy; VoidBB</a>
         </footer>
     </div>
 </body>

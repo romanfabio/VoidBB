@@ -1,5 +1,6 @@
 const apGeneralController = require('../controllers/apGeneral.controller');
 const apLoginController = require('../controllers/apLogin.controller');
+const apPermissionController = require('../controllers/apPermission.controller');
 const isAuthHook = require('./hooks/isAuthHook');
 const viewHook = require('./hooks/viewHook');
 const messageHook = require('./hooks/messageHook');
@@ -51,5 +52,19 @@ module.exports = (app) => {
         },
         handler: apLoginController.post,
         preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+    });
+
+    app.route({
+        method: 'GET',
+        url: '/ap/pex',
+        handler: apPermissionController.get,
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+    });
+
+    app.route({
+        method: 'POST',
+        url: '/ap/pex',
+        handler: apPermissionController.post,
+        preHandler: [isAuthHook, viewHook, messageHook, globalHook]
     });
 };

@@ -37,6 +37,7 @@ module.exports = async function (request, reply) {
     if (request.user.globalGroup === pex.GLOBAL_ADMIN) {
 
         const ap = request.session.get('ap');
+        console.log(ap);
         if(ap) {
             if(!request.url.startsWith('/ap/')) {
                 request.session.set('ap', false);

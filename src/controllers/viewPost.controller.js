@@ -36,6 +36,7 @@ module.exports = {
                     return;
                 }
 
+
                 const forum = result[0];
 
                 const canComment = await canCreateComment(request, this.database,forum, post);

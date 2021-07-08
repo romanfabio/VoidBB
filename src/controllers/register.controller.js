@@ -4,7 +4,6 @@ const pex = require('../util/permissionManager');
 
 module.exports = {
     get: function (request, reply) {
-        console.log(request.user);
         // User is already authenticated or doesn't have the permission to register
         if(request.user.username || !pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
             reply.redirect('/');
@@ -43,21 +42,21 @@ module.exports = {
                         reply.redirect('/');
                     } catch(e) {
                         console.error(e);
-                        viewArgs.ERROR = 'An error has occured, retry later';
-                        reply.view('register.ejs', viewArgs);
+                        request.flash('error', 'An error has occured, retry later');
+                        reply.redirect('/register');
                     }
 
                 } else {
-                    viewArgs.ERROR = 'Invalid Username';
-                    reply.view('register.ejs', viewArgs);
+                    request.flash('error', 'Invalid Username');
+                    reply.redirect('/register');
                 }
             } else {
-                viewArgs.ERROR = 'Invalid Password';
-                reply.view('register.ejs', viewArgs);    
+                request.flash('error', 'Invalid Password');
+                reply.redirect('/register');    
             }
         } else {
-            viewArgs.ERROR = 'Invalid Email';
-            reply.view('register.ejs', viewArgs);
+            request.flash('error', 'Invalid Email');
+            reply.redirect('/register');
         }
     }
 }

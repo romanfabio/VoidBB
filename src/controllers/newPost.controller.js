@@ -1,5 +1,6 @@
 const validator = require('../util/validator');
 const pex = require('../util/permissionManager');
+const cache = require('../util/cache');
 
 module.exports = {
     get: async function (request, reply) {
@@ -39,9 +40,9 @@ module.exports = {
                         }
 
                         // TODO Can global moderator ignore forum's permission?
-                        result = await this.database.select('*').from('ForumModerators').where('username',username).andWhere('forumName', name);
+                        result = await cache.fMod(username, name);
 
-                        if (result.length !== 1) {
+                        if (!result) {
                             // Normal user
                             if (forum.userMask[pex.forumBit.CREATE_POST] == '1')
                                 reply.view('newPost.ejs', viewArgs);
@@ -85,6 +86,7 @@ module.exports = {
 
             const viewArgs = request.viewArgs;
 
+            // TODO Post method are aonly allowed to redirect, no render views
             if (!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_FORUM)) {
 
                 viewArgs.back = '/f/' + name;
@@ -99,8 +101,6 @@ module.exports = {
 
                 if (result.length === 1) {
                     const forum = result[0];
-
-                    viewArgs.forumName = name;
 
                     const data = request.body;
 
@@ -158,12 +158,12 @@ module.exports = {
                             reply.redirect('/f/' + name);
 
                         } else {
-                            viewArgs.ERROR = 'Invalid description';
-                            reply.view('newPost.ejs', viewArgs);
+                            request.flash('error', 'Invalid Description');
+                        reply.redirect('/f/' + name);
                         }
                     } else {
-                        viewArgs.ERROR = 'Invalid title';
-                        reply.view('newPost.ejs', viewArgs);
+                        request.flash('error', 'Invalid Title');
+                        reply.redirect('/f/' + name);
                     }
                 } else {
                     // Forum doesn't exists, redirect to home

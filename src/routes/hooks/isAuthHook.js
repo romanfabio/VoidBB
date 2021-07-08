@@ -5,7 +5,7 @@
         - request.user.username : string = <user's name>
 */
 module.exports = (request, reply, done) => {
-    console.log('isAuth Hook');
+    console.info('isAuth Hook');
 
     const username = request.session.get('user');
 

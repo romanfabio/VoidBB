@@ -31,6 +31,10 @@ module.exports = {
         return globalMasks.get(groupId)[bit] == '1';
     },
 
+    getGlobalMask: (groupId) => {
+        return globalMasks.get(groupId);
+    },
+
     forumBit: {
         ANONYMOUS_POST: 0,
         CREATE_POST: 1,

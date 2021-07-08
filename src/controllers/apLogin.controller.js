@@ -17,6 +17,7 @@ module.exports = {
 
     post: async function (request, reply) {
 
+        // Only admins have access to the admin panel
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
             return;
@@ -26,8 +27,6 @@ module.exports = {
             reply.redirect('/ap/general');
             return;
         }
-
-        const viewArgs = request.viewArgs;
 
         const data = request.body;
 
@@ -47,8 +46,8 @@ module.exports = {
 
                     reply.redirect('/ap/general');
                 } else { // Passwords don't match
-                    viewArgs.ERROR = 'Password invalid';
-                    reply.view('apLogin.ejs', viewArgs);
+                    request.flash('error', 'Password invalid');
+                    reply.redirect('/ap');
                 }
 
             } else { // Username doesn't exist
@@ -57,8 +56,8 @@ module.exports = {
 
         } catch(e) {
             console.error(e);
-            viewArgs.ERROR = 'An error has occured, retry later';
-            reply.view('apLogin.ejs', viewArgs);
+            request.flash('error', 'An error has occured, retry later');
+            reply.redirect('/ap');
         }
         
     },

@@ -64,6 +64,16 @@ module.exports = (app) => {
     app.route({
         method: 'POST',
         url: '/ap/pex',
+        schema: {
+            body: {
+                type: "object",
+                properties: {
+                    a_register: {type: 'string', nullable: false},
+                    a_view_forum: {type: 'string', nullable: false},
+                    a_view_user: {type: 'string', nullable: false}
+                }
+            }
+        },
         handler: apPermissionController.post,
         preHandler: [isAuthHook, viewHook, messageHook, globalHook]
     });

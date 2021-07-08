@@ -42,19 +42,19 @@ module.exports = {
                     else
                         reply.redirect('/');
                 } else { // Passwords don't match
-                    viewArgs.ERROR = 'Username and/or password invalid';
-                    reply.view('login.ejs', viewArgs);
+                    request.flash('error', 'Username and/or password invalid');
+                    reply.redirect('/login');
                 }
 
             } else { // Username doesn't exist
-                viewArgs.ERROR = 'Username and/or password invalid';
-                reply.view('login.ejs', viewArgs);
+                request.flash('error', 'Username and/or password invalid');
+                reply.redirect('/login');
             }
 
         } catch(e) {
             console.error(e);
-            viewArgs.ERROR = 'An error has occured, retry later';
-            reply.view('login.ejs', viewArgs);
+            request.flash('error', 'An error has occured, retry later');
+            reply.redirect('/login');
         }
         
     }

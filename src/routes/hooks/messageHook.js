@@ -7,7 +7,7 @@
         - request.viewArgs.ERROR : string = <view's data>
 */
 module.exports = (request, reply, done) => {
-    console.log('message Hook');
+    console.info('message Hook');
 
     const msgs = reply.flash();
 

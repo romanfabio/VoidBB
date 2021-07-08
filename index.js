@@ -7,6 +7,7 @@ const path = require('path');
 const routes = require('./src/routes/routes');
 const pex = require('./src/util/permissionManager');
 const variableManager = require('./src/util/variableManager');
+const cache = require('./src/util/cache');
 
 (async function () {
 
@@ -50,6 +51,7 @@ const variableManager = require('./src/util/variableManager');
     try {
         await variableManager.reload(knex);
         await pex.reload(knex);
+        cache.init(knex);
     } catch (e) {
         console.error(e);
         process.exit(1);
@@ -59,13 +61,13 @@ const variableManager = require('./src/util/variableManager');
 
     routes(fastify);
 
-    fastify.listen(PORT, err => {
-        if (err) {
-            console.log(err.message);
+    fastify.listen(PORT, e => {
+        if (e) {
+            console.error(e);
             process.exit(1);
         }
         else
-            console.log('Server running on port ' + PORT);
+            console.info('Server running on port ' + PORT);
     });
 
 

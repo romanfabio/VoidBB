@@ -4,7 +4,6 @@ module.exports = {
     get: async function(request, reply) {
 
         const viewArgs = request.viewArgs;
-        viewArgs.styles = ['preview-list.css'];
 
         if(pex.isGlobalSet(request.user.globalGroup, pex.globalBit.CREATE_FORUM))
             viewArgs.canCreateForum = true;

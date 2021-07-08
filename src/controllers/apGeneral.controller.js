@@ -28,9 +28,6 @@ module.exports = {
             reply.redirect('/ap');
             return;
         }
-        
-        const viewArgs = request.viewArgs;
-        viewArgs.boardName = variable.get('BOARD_NAME');
 
         const data = request.body;
 
@@ -43,7 +40,7 @@ module.exports = {
         }
 
         if(!validator.isBoardName(data.boardName)) {
-            request.flash('error','Invalid board name');
+            request.flash('error','Invalid Board Name');
             reply.redirect('/ap/general');
             return;
         }

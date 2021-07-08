@@ -21,10 +21,6 @@ module.exports = {
             return;
         }
 
-        // User must be registered, request.user.username is always valid
-        const viewArgs = request.viewArgs;
-
-
         const data = request.body;
 
         data.name = data.name.trim();
@@ -45,17 +41,17 @@ module.exports = {
 
                 } catch(e) {
                     console.error(e);
-                    viewArgs.ERROR = 'An error has occured, retry later';
-                    reply.view('newForum.ejs', viewArgs);
+                    request.flash('error', 'An error has occured, retry later');
+                    reply.redirect('/f');
                 }
                     
             } else {
-                viewArgs.ERROR = 'Invalid Description';
-                reply.view('newForum.ejs', viewArgs);
+                request.flash('error', 'Invalid Description');
+                reply.redirect('/f');
             }
         } else {
-            viewArgs.ERROR = 'Invalid Name';
-            reply.view('newForum.ejs', viewArgs);
+            request.flash('error', 'Invalid Name');
+            reply.redirect('/f');
         }
 
     }

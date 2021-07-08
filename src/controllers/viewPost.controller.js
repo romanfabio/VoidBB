@@ -1,8 +1,9 @@
 const pex = require('../util/permissionManager');
 const validator = require('../util/validator');
+const cache = require('../util/cache');
 
 module.exports = {
-    get: async function(request, reply) {
+    get: async function (request, reply) {
         const id = request.params.id;
 
         const viewArgs = request.viewArgs;
@@ -24,13 +25,9 @@ module.exports = {
 
                 viewArgs.post = post;
 
-                result = await this.database.select('*').from('Comments').where('postId', id);
+                result = await this.database.select('creator', 'userMask', 'moderatorMask').from('Forums').where('name', post.forumName);
 
-                viewArgs.comments = result;
-
-                result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', post.forumName);
-
-                if(result.length !== 1) {
+                if (result.length !== 1) {
                     // Forum doesn't exists, redirect to home
                     reply.redirect('/');
                     return;
@@ -39,17 +36,22 @@ module.exports = {
 
                 const forum = result[0];
 
-                const canComment = await canCreateComment(request, this.database,forum, post);
+                const canComment = await hasPexToComment(request, this.database, forum, post);
 
-                if(canComment === null) {
+                if (canComment === null) {
+                    // An error has occured while checking for permission to comment
                     reply.redirect('/');
                     return;
                 }
 
 
-                if(canComment) {
+                if (canComment) {
                     viewArgs.canComment = true;
                 }
+
+                result = await this.database.select('*').from('Comments').where('postId', id);
+
+                viewArgs.comments = result;
 
                 reply.view('viewPost.ejs', viewArgs);
 
@@ -64,11 +66,12 @@ module.exports = {
 
     },
 
-    post: async function(request, reply) {
+    post: async function (request, reply) {
         const id = request.params.id;
 
         const viewArgs = request.viewArgs;
 
+        // TODO Post method are aonly allowed to redirect, no render views
         if (!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_FORUM)) {
 
             viewArgs.back = '/p/' + id;
@@ -85,19 +88,13 @@ module.exports = {
 
             let result = await this.database.select('*').from('Posts').where('id', id);
 
-            if(result.length === 1) {
+            if (result.length === 1) {
 
                 const post = result[0];
 
-                viewArgs.post = post;
+                result = await this.database.select('creator', 'userMask', 'moderatorMask').from('Forums').where('name', post.forumName);
 
-                result = await this.database.select('*').from('Comments').where('postId', id);
-
-                viewArgs.comments = result;
-
-                result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', post.forumName);
-
-                if(result.length !== 1) {
+                if (result.length !== 1) {
                     //Forum doesn't exists, redirect to home
                     reply.redirect('/');
                     return;
@@ -105,41 +102,39 @@ module.exports = {
 
                 const forum = result[0];
 
-                const canComment = await canCreateComment(request, this.database,forum, post);
+                const canComment = await hasPexToComment(request, this.database, forum, post);
 
-                if(canComment === null) {
+                if (canComment === null) {
                     reply.redirect('/');
                     return;
                 }
 
-                if(canComment) {
-                    viewArgs.canComment = true;
-                } else {
+                if (!canComment) {
                     reply.redirect('/p/' + id);
                     return;
                 }
 
-                if(validator.isComment(data.description)) {
+                if (validator.isComment(data.description)) {
 
                     try {
-                        await this.database('Comments').insert([{postId: id, reply: null,  description: data.description, creator: (request.user.username?request.user.username:null)}]);
-                        
+                        await this.database('Comments').insert([{ postId: id, reply: null, description: data.description, creator: (request.user.username ? request.user.username : null) }]);
+
                         reply.redirect('/p/' + id);
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
-                        viewArgs.ERROR = 'An error has occured, retry later';
-                        reply.view('viewPost.ejs', viewArgs);
+                        request.flash('error', 'An error has occured, retry later');
+                        reply.redirect('/p/' + id);
                     }
                 } else {
-                    viewArgs.ERROR = 'Invalid comment';
-                    reply.view('viewPost.ejs', viewArgs);
+                    request.flash('error', 'Invalid Comment');
+                    reply.redirect('/p/' + id);
                 }
 
             } else {
                 //Post doesn't exists, redirect to home
                 reply.redirect('/');
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             reply.redirect('/');
         }
@@ -149,27 +144,27 @@ module.exports = {
 /**
  * @returns true if user has permission to comment, otherwise return false. Return null if a database's error occurs.
  */
-async function canCreateComment(request, database, forum, post) {
+async function hasPexToComment(request, database, forum, post) {
 
     let result = false;
 
-    if(request.user.username) {
+    if (request.user.username) {
 
-        if(request.user.username === forum.creator || request.user.globalGoup === pex.GLOBAL_ADMIN) {
+        if (request.user.username === forum.creator || request.user.globalGoup === pex.GLOBAL_ADMIN) {
             result = true;
         } else {
             try {
                 // TODO Can global moderator ignore forum's permission?
-                const mod = await database.select('*').from('ForumModerators').where('username', request.user.username).andWhere('forumName', post.forumName);
+                const mod = await cache.fMod(request.user.username, post.forumName);
 
-                if (mod.length === 1) {
-                    if (forum.moderatorMask[pex.forumBit.CREATE_COMMENT] == '1')
+                if (mod) {
+                    if (forum.moderatorMask[pex.forumBit.CREATE_POST] == '1')
                         result = true;
                 } else {
-                    if (forum.userMask[pex.forumBit.CREATE_COMMENT] == '1')
+                    if (forum.userMask[pex.forumBit.CREATE_POST] == '1')
                         result = true;
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 result = null;
             }

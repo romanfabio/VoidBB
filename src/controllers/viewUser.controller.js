@@ -5,7 +5,7 @@ module.exports = {
     get: async function(request, reply) {
         const username = request.params.username;
 
-        if(username.length > 0) {
+        if(username.length > 0) { // if url ends with /u/ , username is an invalid empty string, so redirect user to home
 
             const viewArgs = request.viewArgs;
 
@@ -16,7 +16,6 @@ module.exports = {
 
                 reply.view('login.ejs', viewArgs);
                 return;
-
             }
 
             try {

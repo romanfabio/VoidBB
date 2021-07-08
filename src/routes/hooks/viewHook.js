@@ -9,7 +9,7 @@ const variable = require('../../util/variableManager');
         - request.viewArgs.USERNAME : string = <view's data>
 */
 module.exports = (request, reply, done) => {
-    console.log('view Hook');
+    console.info('view Hook');
 
     request.viewArgs = {};
 

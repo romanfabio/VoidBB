@@ -1,4 +1,5 @@
 const pex = require('../util/permissionManager');
+const cache = require('../util/cache');
 
 module.exports = {
     get: async function(request, reply) {
@@ -29,7 +30,6 @@ module.exports = {
                     viewArgs.posts = result;
 
                     viewArgs.forumName = name;
-                    viewArgs.styles = ['preview-list.css'];
 
                     if(request.user.username) {
 
@@ -41,19 +41,19 @@ module.exports = {
                         }
 
                         // TODO Can global moderator ignore forum's permission?
-                        result = await this.database.select('*').from('ForumModerators').where('username', request.user.username).andWhere('forumName', name);
+                        result = await cache.fMod(request.user.username, name);
 
-                        if(result.length === 1) {
+                        if(result) {
                             if(forum.moderatorMask[pex.forumBit.CREATE_POST] == '1')
-                                view_args.canCreatePost = true;
+                                viewArgs.canCreatePost = true;
                         } else {
                             if(forum.userMask[pex.forumBit.CREATE_POST] == '1')
-                                view_args.canCreatePost = true;
+                                viewArgs.canCreatePost = true;
                         }
 
                     } else {
                         if(forum.userMask[pex.forumBit.ANONYMOUS_POST] == '1')
-                            view_args.canCreatePost = true;
+                            viewArgs.canCreatePost = true;
                     }
 
                     reply.view('viewForum.ejs', viewArgs);

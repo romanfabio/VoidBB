@@ -150,7 +150,7 @@ async function hasPexToComment(request, database, forum, post) {
 
     if (request.user.username) {
 
-        if (request.user.username === forum.creator || request.user.globalGoup === pex.GLOBAL_ADMIN) {
+        if (request.user.username === forum.creator || request.user.globalGroup === pex.GLOBAL_ADMIN) {
             result = true;
         } else {
             try {

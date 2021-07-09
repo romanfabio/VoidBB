@@ -2,20 +2,25 @@
 
 <form action="/ap/pex" method="POST">
     <h3>Anonymous</h3>
-        <label for="A_REGISTER">Register</label>
-        <input type="checkbox" name="A_REGISTER" <%= A_REGISTER %>
-        <br>
-        <label for="A_VIEW_FORUM">View Forum</label>
-        <input type="checkbox" name="A_VIEW_FORUM" <%= A_VIEW_FORUM %>
-        <br>
-        <label for="A_VIEW_USER">View User</label>
-        <input type="checkbox" name="A_VIEW_USER" <%= A_VIEW_USER %>
+    <label for="A_REGISTER">Register</label>
+    <input type="checkbox" name="A_REGISTER" <%= A_REGISTER %>
+    <br>
+    <label for="A_VIEW_FORUM">View Forum</label>
+    <input type="checkbox" name="A_VIEW_FORUM" <%= A_VIEW_FORUM %>
+    <br>
+    <label for="A_VIEW_USER">View User</label>
+    <input type="checkbox" name="A_VIEW_USER" <%= A_VIEW_USER %>
 
     <br>
     <h3>Registered User</h3>
+    <label for="U_CREATE_FORUM">Create Forum</label>
+    <input type="checkbox" name="U_CREATE_FORUM" <%= U_CREATE_FORUM %>
+    <br>
 
     <h3>Moderator</h3>
-
+    <label for="M_CREATE_FORUM">Create Forum</label>
+    <input type="checkbox" name="M_CREATE_FORUM" <%= M_CREATE_FORUM %>
+    <br>
     <input type="submit" value="Save">
 
 </form>

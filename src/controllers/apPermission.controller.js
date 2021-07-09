@@ -18,6 +18,10 @@ module.exports = {
                 viewArgs.A_VIEW_FORUM = (anonymousMask[pex.globalBit.VIEW_FORUM] == '1'?'checked':'');
                 viewArgs.A_VIEW_USER = (anonymousMask[pex.globalBit.VIEW_USER] == '1'?'checked':'');
 
+                viewArgs.U_CREATE_FORUM = (userMask[pex.globalBit.CREATE_FORUM] == '1'?'checked':'');
+
+                viewArgs.M_CREATE_FORUM = (moderatorMask[pex.globalBit.CREATE_FORUM] == '1'?'checked':'');
+
                 reply.view('apPermission.ejs', viewArgs);
             } else {
                 reply.redirect('/ap');
@@ -43,12 +47,15 @@ module.exports = {
 
         const userMask = fillUserMask(data);
 
+        const moderatorMask = fillModeratorMask(data);
+
         try {
 
             await this.database.transaction(async trx => {
 
                 await trx('GlobalGroups').where('id', pex.GLOBAL_ANONYMOUS).update({mask: anonymousMask});
                 await trx('GlobalGroups').where('id', pex.GLOBAL_USER).update({mask: userMask});
+                await trx('GlobalGroups').where('id', pex.GLOBAL_MODERATOR).update({mask: moderatorMask});
 
                 await pex.reload(trx);
             });
@@ -80,7 +87,22 @@ function fillAnonymousMask(data) {
 
 function fillUserMask(data) {
 
-    return variable.get('REQUIRED_USER');
+    let required = variable.get('REQUIRED_USER');
+
+    if(data.U_CREATE_FORUM)
+        required = setOn(required, pex.globalBit.CREATE_FORUM);
+
+    return required;
+}
+
+function fillModeratorMask(data) {
+
+    let required = variable.get('REQUIRED_MODERATOR');
+
+    if(data.M_CREATE_FORUM)
+        required = setOn(required, pex.globalBit.CREATE_FORUM);
+
+    return required;
 }
 
 function setOn(str,index) {

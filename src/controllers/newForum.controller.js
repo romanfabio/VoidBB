@@ -32,9 +32,9 @@ module.exports = {
                 data.name = data.name.toLowerCase();
 
                 try {
-                    const emptyMask = variable.get('EMPTY_MASK');
+                    const required = pex.REQUIRED_FORUM_PEX;
 
-                    await this.database('Forums').insert([{name: data.name, description: data.description, creator: request.user.username, userMask: emptyMask, moderatorMask: emptyMask}]);
+                    await this.database('Forums').insert([{name: data.name, description: data.description, creator: request.user.username, pexMask: required}]);
 
                     request.flash('info', 'Forum created');
                     reply.redirect('/f/' + data.name);

@@ -16,6 +16,7 @@ module.exports = {
 
     },
 
-    get: (key) => map.get(key)
+    get: (key) => map.get(key),
+
 }
 

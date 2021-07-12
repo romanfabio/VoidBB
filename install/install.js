@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 const { randomInt } = require('crypto');
+const db = require('./db');
 
 const supportedDrivers = {
     'pg': { name: 'PostgreSQL', defaultPort: 5432 },
@@ -22,8 +23,9 @@ async function start() {
 
         prompt.start();
 
-        let db;
+
         let connParams;
+        let conn;
 
         let reconfigure;
         do {
@@ -33,13 +35,11 @@ async function start() {
 
             connParams = await getConnectionParams();
 
-            db = getDriverInterface(connParams.driver);
-
             do {
                 try {
                     console.log('Trying to connect to the database...');
 
-                    await db.connect(connParams);
+                    conn = await db.connect(connParams);
 
                     break;
                 } catch (e) {
@@ -100,25 +100,25 @@ async function start() {
 
         try {
 
-            await db.begin();
+            await conn.transaction(async trx => {
+                console.log('Creating the tables...');
 
-            console.log('Creating the tables...');
+                await db.createTables(trx);
 
-            await db.createTables();
+                console.log('Populating the tables...');
 
-            console.log('Populating the tables...');
+                await db.populate(trx, boardName, fUsername, fPassword, fEmail);
 
-            await db.init(boardName, fUsername, fPassword, fEmail);
+                console.log('Generating file .env...');
+            
+                fs.writeFileSync(path.join(__dirname, '..', '.env'), `BOARD_PORT=${boardPort}${EOL}DB_DRIVER=${connParams.driver}${EOL}DB_HOST=${connParams.host}${EOL}DB_PORT=${connParams.port}${EOL}DB_NAME=${connParams.name}${EOL}DB_USER=${connParams.user}${EOL}DB_PASSWORD=${connParams.pass}${EOL}SECRET=${secret}`, { encoding: 'utf-8' });
 
-            console.log('Generating file .env...');
+            });
 
-            fs.writeFileSync(path.join(__dirname, '..', '.env'), `BOARD_PORT=${boardPort}${EOL}DB_DRIVER=${connParams.driver}${EOL}DB_HOST=${connParams.host}${EOL}DB_PORT=${connParams.port}${EOL}DB_NAME=${connParams.name}${EOL}DB_USER=${connParams.user}${EOL}DB_PASSWORD=${connParams.pass}${EOL}SECRET=${secret}`, { encoding: 'utf-8' });
-
-            await db.commit();
         } catch (e) {
+            console.error(e);
             console.log('An error occurred, retry again');
             console.log('Aborting...');
-            await db.rollback();
             process.exit(1);
         }
 
@@ -232,22 +232,6 @@ async function getFounderPassword() {
     return hash;
 }
 
-function getDriverInterface(driver) {
-    let db = null;
-    switch (driver) {
-        case 'pg':
-            db = require('./interfaces/pg');
-            break;
-        case 'mysql':
-            db = require('./interfaces/mysql');
-            break;
-        default:
-            console.log('Unknown driver');
-            process.exit(1);
-    }
-
-    return db;
-}
 
 async function getConnectionParams() {
 

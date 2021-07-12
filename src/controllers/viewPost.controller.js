@@ -25,7 +25,7 @@ module.exports = {
 
                 viewArgs.post = post;
 
-                result = await this.database.select('creator', 'userMask', 'moderatorMask').from('Forums').where('name', post.forumName);
+                result = await this.database.select('creator', 'pexMask').from('Forums').where('name', post.forumName);
 
                 if (result.length !== 1) {
                     // Forum doesn't exists, redirect to home
@@ -92,7 +92,7 @@ module.exports = {
 
                 const post = result[0];
 
-                result = await this.database.select('creator', 'userMask', 'moderatorMask').from('Forums').where('name', post.forumName);
+                result = await this.database.select('creator', 'pexMask').from('Forums').where('name', post.forumName);
 
                 if (result.length !== 1) {
                     //Forum doesn't exists, redirect to home
@@ -158,10 +158,10 @@ async function hasPexToComment(request, database, forum, post) {
                 const mod = await cache.fMod(request.user.username, post.forumName);
 
                 if (mod) {
-                    if (forum.moderatorMask[pex.forumBit.CREATE_POST] == '1')
+                    if (forum.pexMask[pex.forumBit.M_CRT_COMMENT] == '1')
                         result = true;
                 } else {
-                    if (forum.userMask[pex.forumBit.CREATE_POST] == '1')
+                    if (forum.pexMask[pex.forumBit.U_CRT_COMMENT] == '1')
                         result = true;
                 }
             } catch (e) {
@@ -170,7 +170,7 @@ async function hasPexToComment(request, database, forum, post) {
             }
         }
     } else {
-        if (forum.userMask[pex.forumBit.ANONYMOUS_COMMENT] == '1')
+        if (forum.pexMask[pex.forumBit.A_CRT_COMMENT] == '1')
             result = true;
     }
 

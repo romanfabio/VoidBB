@@ -1,5 +1,9 @@
 <h1 class="title"><%= forumName %></h1>
 
+<% if(locals.canSettings) { %>
+<a href="/fsettings/<%= forumName %>">Settings...</a>
+<% } %>
+
 <% if(locals.posts) { %>
     <% for(let i = 0; i < posts.length; i++) { %>
         <div class="preview">

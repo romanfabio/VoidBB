@@ -22,7 +22,7 @@ module.exports = {
 
             try {
 
-                let result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', name);
+                let result = await this.database.select('creator','pexMask').from('Forums').where('name', name);
 
                 if (result.length === 1) {
                     const forum = result[0];
@@ -44,13 +44,13 @@ module.exports = {
 
                         if (!result) {
                             // Normal user
-                            if (forum.userMask[pex.forumBit.CREATE_POST] == '1')
+                            if (forum.pexMask[pex.forumBit.U_CRT_POST] == '1')
                                 reply.view('newPost.ejs', viewArgs);
                             else
                                 reply.redirect('/f/' + name);
                         } else {
                             // Moderator of this forum
-                            if (forum.moderatorMask[pex.forumBit.CREATE_POST] == '1')
+                            if (forum.pexMask[pex.forumBit.M_CRT_POST] == '1')
                                 reply.view('newPost.ejs', viewArgs);
                             else
                                 reply.redirect('/f/' + name);
@@ -58,7 +58,7 @@ module.exports = {
 
                     } else {
                         // Anonymous
-                        if (forum.userMask[pex.forumBit.ANONYMOUS_POST] == '1')
+                        if (forum.pexMask[pex.forumBit.A_CRT_POST] == '1')
                             reply.view('newPost.ejs', viewArgs);
                         else
                             reply.redirect('/f/' + name);
@@ -97,7 +97,7 @@ module.exports = {
             }
 
             try {
-                let result = await this.database.select('creator','userMask','moderatorMask').from('Forums').where('name', name);
+                let result = await this.database.select('creator','pexMask').from('Forums').where('name', name);
 
                 if (result.length === 1) {
                     const forum = result[0];
@@ -123,18 +123,18 @@ module.exports = {
                                 // Is not administrator of this forum or the board's admin
                                 if (forum.creator !== username && request.user.globalGroup !== pex.GLOBAL_ADMIN) {
                                     
-                                    result = await this.database.select('*').from('ForumModerators').where('username',username).andWhere('forumName', name);
+                                    result = await cache.fMod(username, name);
                                     
-                                    if(result.length !== 1) {
+                                    if(!result) {
                                         // Normal user
-                                        if (forum.userMask[pex.forumBit.CREATE_POST] != '1') {
+                                        if (forum.pexMask[pex.forumBit.U_CRT_POST] != '1') {
                                             reply.redirect('/f/' + name);
                                             return;
                                         }
 
                                     } else {
                                         // Moderator of this forum
-                                        if (forum.moderatorMask[pex.forumBit.CREATE_POST] != '1') {
+                                        if (forum.pexMask[pex.forumBit.M_CRT_POST] != '1') {
                                             reply.redirect('/f/' + name);
                                             return;
                                         }
@@ -142,7 +142,7 @@ module.exports = {
                                     }
                                 }
                             } else {
-                                if (forum.userMask[pex.forumBit.ANONYMOUS_POST] == '1') {
+                                if (forum.pexMask[pex.forumBit.A_CRT_POST] == '1') {
                                     creator = null;
                                 }
                                 else {
@@ -159,7 +159,7 @@ module.exports = {
 
                         } else {
                             request.flash('error', 'Invalid Description');
-                        reply.redirect('/f/' + name);
+                            reply.redirect('/f/' + name);
                         }
                     } else {
                         request.flash('error', 'Invalid Title');

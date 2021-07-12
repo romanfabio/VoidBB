@@ -36,6 +36,7 @@ module.exports = {
                         if(forum.creator === request.user.username || request.user.globalGroup === pex.GLOBAL_ADMIN) {
                             //Admin has full permission
                             viewArgs.canCreatePost = true;
+                            viewArgs.canSettings = true;
                             reply.view('viewForum.ejs', viewArgs);
                             return;
                         }
@@ -44,15 +45,15 @@ module.exports = {
                         result = await cache.fMod(request.user.username, name);
 
                         if(result) {
-                            if(forum.moderatorMask[pex.forumBit.CREATE_POST] == '1')
+                            if(forum.pexMask[pex.forumBit.M_CRT_POST] == '1')
                                 viewArgs.canCreatePost = true;
                         } else {
-                            if(forum.userMask[pex.forumBit.CREATE_POST] == '1')
+                            if(forum.pexMask[pex.forumBit.U_CRT_POST] == '1')
                                 viewArgs.canCreatePost = true;
                         }
 
                     } else {
-                        if(forum.userMask[pex.forumBit.ANONYMOUS_POST] == '1')
+                        if(forum.pexMask[pex.forumBit.A_CRT_POST] == '1')
                             viewArgs.canCreatePost = true;
                     }
 

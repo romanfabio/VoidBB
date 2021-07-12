@@ -27,8 +27,7 @@ CREATE TABLE Forums (
     name VARCHAR(32) NOT NULL,
     description VARCHAR(255) NOT NULL,
     creator VARCHAR(32) NOT NULL REFERENCES Users(username),
-    userMask VARCHAR(255) NOT NULL,
-    moderatorMask VARCHAR(255) NOT NULL,
+    pexMask VARCHAR(255) NOT NULL,
 
     PRIMARY KEY(name)
 );

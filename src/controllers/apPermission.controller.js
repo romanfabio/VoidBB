@@ -73,7 +73,7 @@ module.exports = {
 
 function fillAnonymousMask(data) {
     
-    let required = variable.get('REQUIRED_ANONYMOUS');
+    let required = pex.REQUIRED_ANONYMOUS;
 
     if(data.A_REGISTER)
         required = setOn(required, pex.globalBit.REGISTER);
@@ -87,7 +87,7 @@ function fillAnonymousMask(data) {
 
 function fillUserMask(data) {
 
-    let required = variable.get('REQUIRED_USER');
+    let required = pex.REQUIRED_USER;
 
     if(data.U_CREATE_FORUM)
         required = setOn(required, pex.globalBit.CREATE_FORUM);
@@ -97,7 +97,7 @@ function fillUserMask(data) {
 
 function fillModeratorMask(data) {
 
-    let required = variable.get('REQUIRED_MODERATOR');
+    let required = pex.REQUIRED_MODERATOR;
 
     if(data.M_CREATE_FORUM)
         required = setOn(required, pex.globalBit.CREATE_FORUM);

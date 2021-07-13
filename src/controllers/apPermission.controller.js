@@ -19,8 +19,11 @@ module.exports = {
                 viewArgs.A_VIEW_USER = (anonymousMask[pex.globalBit.VIEW_USER] == '1'?'checked':'');
 
                 viewArgs.U_CREATE_FORUM = (userMask[pex.globalBit.CREATE_FORUM] == '1'?'checked':'');
+                viewArgs.U_CHANGE_FORUM_PEX = (userMask[pex.globalBit.CHANGE_FORUM_PEX] == '1'?'checked':'');
 
                 viewArgs.M_CREATE_FORUM = (moderatorMask[pex.globalBit.CREATE_FORUM] == '1'?'checked':'');
+                viewArgs.M_CHANGE_FORUM_PEX = (moderatorMask[pex.globalBit.CHANGE_FORUM_PEX] == '1'?'checked':'');
+
 
                 reply.view('apPermission.ejs', viewArgs);
             } else {
@@ -89,9 +92,11 @@ function fillUserMask(data) {
 
     let required = pex.REQUIRED_USER;
 
-    if(data.U_CREATE_FORUM)
+    if(data.U_CREATE_FORUM) {
         required = setOn(required, pex.globalBit.CREATE_FORUM);
-
+        if(data.U_CHANGE_FORUM_PEX)
+            required = setOn(required, pex.globalBit.CHANGE_FORUM_PEX);
+    }
     return required;
 }
 
@@ -99,8 +104,11 @@ function fillModeratorMask(data) {
 
     let required = pex.REQUIRED_MODERATOR;
 
-    if(data.M_CREATE_FORUM)
+    if(data.M_CREATE_FORUM) {
         required = setOn(required, pex.globalBit.CREATE_FORUM);
+        if(data.M_CHANGE_FORUM_PEX)
+            required = setOn(required, pex.globalBit.CHANGE_FORUM_PEX);
+    }
 
     return required;
 }

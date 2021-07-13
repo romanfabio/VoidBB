@@ -1,7 +1,15 @@
-<h1>New Post</h1>
+<h1 class="px-0 mt-2">New Post</h1>
 
 <form method="post" action="/p?f=<%= forumName %>">
-    <input type="text" name="title" id="title" placeholder="Name">
-    <textarea name="description" id="description" cols="20" rows="10" placeholder="Description"></textarea>
-    <input type="submit" value="Create">
+<div class="mb-3">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" class="form-control" name="title">
+</div>
+<div class="mb-3">
+    <label for="description" class="form-label">Body</label>
+    <textarea class="form-control" name="description" rows="6"></textarea>
+</div>
+<div class="p-1 text-end">
+    <button class="px-3 btn btn-primary">Create</button>
+</div>
 </form>

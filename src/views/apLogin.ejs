@@ -1,6 +1,14 @@
-<h1>Admin Panel</h1>
-<form method="POST" action="/ap">
-    <input type="text" name="username" id="username" value="<%= USERNAME %>" disabled>
-    <input type="password" name="password" id="password" placeholder="password">
-    <input type="submit" value="Login">
+<h1 class="px-0 mt-2">Admin Panel</h1>
+<form method="POST" action="/ap" class="col-sm-4">
+    <div class="p-1">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" value="<%= USERNAME %>" disabled>
+    </div>
+    <div class="p-1">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" class="form-control">
+    </div>
+    <div class="p-1 text-end">
+        <button class="px-3 btn btn-primary">Login</button>
+    </div>
 </form>

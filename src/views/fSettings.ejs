@@ -1,36 +1,46 @@
-<h1><%= forumName %></h1>
+<h1 class="px-0 mt-2">Forum Settings</h1>
 
-<h2>Change description</h2>
+<a class="px-0" href="/f/<%= forumName %>">f/<%= forumName %></a>
+
+<hr>
+
+<h3 class="mt-3">Change Description</h3>
 <form method="POST" action="/fsettings/<%= forumName %>">
-    <label for="description">Descrizione</label>
-    <textarea name="description" id="description" cols="20" rows="10"><%= description %></textarea>
-    <button name="action" value="description">Change</button>
+<div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea class="form-control" name="description" rows="3"><%= description %></textarea>
+</div>
+<div class="p-1 text-end">
+    <button name="action" value="description" class="px-3 btn btn-primary">Change</button>
+</div>
 </form>
 
-<% if(locals.pex) { %>
+<% if(locals.pex) { console.log(pex); %>
 <hr>
-<h2>Permission</h2>
+<h3>Permission</h3>
 <form method="POST" action="/fsettings/<%= forumName %>">
-    <h3>Anonymous</h3>
-    <label for="A_CRT_POST">Can Post</label>
-    <input type="checkbox" name="A_CRT_POST" <%= pex.A_CRT_POST %>
-    <br>
-    <label for="A_CRT_COMMENT">Can Comment</label>
-    <input type="checkbox" name="A_CRT_COMMENT" <%= pex.A_CRT_COMMENT %>
-    <br>
-    <h3>Registered User</h3>
-    <label for="U_CRT_POST">Create Post</label>
-    <input type="checkbox" name="U_CRT_POST" <%= pex.U_CRT_POST %>
-    <label for="U_CRT_COMMENT">Create comment</label>
-    <input type="checkbox" name="U_CRT_COMMENT" <%= pex.U_CRT_COMMENT %>
-    <br>
-
-    <h3>Moderator</h3>
-    <label for="M_CRT_POST">Create post</label>
-    <input type="checkbox" name="M_CRT_POST" <%= pex.M_CRT_POST %>
-    <label for="M_CRT_COMMENT">Create comment</label>
-    <input type="checkbox" name="M_CRT_COMMENT" <%= pex.M_CRT_COMMENT %>
-    <br>
-    <button name="action" value="pex">Change</button>
+    <table class="table">
+        <tr>
+            <th>Action</th>
+            <th class="col-sm-2">Anonymous</th>
+            <th class="col-sm-2">User</th>
+            <th class="col-sm-2">Moderator</th>
+        </tr>
+        <tr>
+            <td>Can Post</td>
+            <td><input type="checkbox" name="A_CRT_POST" <%= pex.A_CRT_POST %> ></td>
+            <td><input type="checkbox" name="U_CRT_POST" <%= pex.U_CRT_POST %> ></td>
+            <td><input type="checkbox" name="M_CRT_POST" <%= pex.M_CRT_POST %> ></td>
+        </tr>
+        <tr>
+            <td>Can Create Comment</td>
+            <td><input type="checkbox" name="A_CRT_COMMENT" <%= pex.A_CRT_COMMENT %> ></td>
+            <td><input type="checkbox" name="U_CRT_COMMENT" <%= pex.U_CRT_COMMENT %> ></td>
+            <td><input type="checkbox" name="M_CRT_COMMENT" <%= pex.M_CRT_COMMENT %> ></td>
+        </tr>
+    </table>
+    <div class="p-1 text-end">
+        <button name="action" value="pex" class="px-3 btn btn-primary">Change</button>
+    </div>
 </form>
 <% } %>

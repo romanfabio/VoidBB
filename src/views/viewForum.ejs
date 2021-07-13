@@ -1,24 +1,28 @@
-<h1 class="title"><%= forumName %></h1>
+<h1 class="px-0 mt-2"><%= forumName %></h1>
 
 <% if(locals.canSettings) { %>
-<a href="/fsettings/<%= forumName %>">Settings...</a>
+<div class="mt-3 ps-0">
+    <a class="btn btn-primary" href="/fsettings/<%= forumName %>">Settings...</a>
+</div>
 <% } %>
 
 <% if(locals.posts) { %>
     <% for(let i = 0; i < posts.length; i++) { %>
-        <div class="preview">
-            <h3><a class="preview-title" href="/p/<%= posts[i].id %>"><%= posts[i].title %></a></h3>
-            <p class="preview-description"><%=  posts[i].description %></p>
+<div class="border-start border-dark mt-2 px-3 bg-light">
+    <h3><a class="" href="/p/<%= posts[i].id %>"><%= posts[i].title %></a></h3>
+    <p class="preview-description"><%=  posts[i].description %></p>
 
-            <% if(posts[i].creator === null) { %>
-            <h5>Anonymous</h5>
-            <% } else { %>
-            <h5><a href="/u/<%= posts[i].creator %>"><%= posts[i].creator %></a></h5>
-            <% }%>
-        </div>
+        <% if(posts[i].creator === null) { %>
+    <h5>Anonymous</h5>
+        <% } else { %>
+    <h6><a href="/u/<%= posts[i].creator %>"><%= posts[i].creator %></a></h6>
+        <% }%>
+</div>
     <% } %>
 <% } %>
 
 <% if(locals.canCreatePost) { %>
-<a class="new-item" href="/p?f=<%= forumName %>">New Post</a>
+<div class="mt-3 ps-0">
+    <a class="btn btn-primary" href="/p?f=<%= forumName %>">New Post</a>
+</div>
 <% } %>

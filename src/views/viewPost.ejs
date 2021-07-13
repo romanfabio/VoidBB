@@ -1,25 +1,35 @@
-<a href="/f/<%= post.forumName %>"><%= post.forumName %></a>
+<a class="px-0" href="/f/<%= post.forumName %>">f/<%= post.forumName %></a>
 
-<h2><%= post.title %></h2>
+<hr>
 
-<p><%= post.description %></p>
+<div class="bg-light">
+    <h2><%= post.title %></h2>
 
-<% if(post.creator === null) { %>
-<h5>Anonymous</h5>
-<% } else { %>
-<h5><a href="/u/<%= post.creator %>"><%= post.creator %></a></h5>
-<% }%>
+    <p><%= post.description %></p>
+    
+    <% if(post.creator === null) { %>
+    <h5>Anonymous</h5>
+    <% } else { %>
+    <h5><a href="/u/<%= post.creator %>"><%= post.creator %></a></h5>
+    <% }%>
 
-<p><%= post.created %></p>
+    <p><%= post.created %></p>
+</div>
 
 <% for(let i = 0; i < comments.length; i++) { %>
+<div class="p-1 ps-3 bg-light mt-3 border-start border-dark">
     <h5><%= (comments[i].creator?comments[i].creator:"Anonymous") %></h5>
     <p><%= comments[i].description %></p>
+</div>
 <% } %>
 
 <% if(locals.canComment) { %>
 <form action="/p/<%= post.id %>" method="POST">
-    <textarea name="description" id="description" cols="30" rows="10"></textarea>
-    <input type="submit" value="Comment">
+    <div class="my-3">
+        <textarea class="form-control" name="description" rows="2" placeholder="Comment something..."></textarea>
+    </div>
+    <div class="p-1 text-end">
+        <button class="px-3 btn btn-primary">Comment</button>
+    </div>
 </form>
 <% } %>

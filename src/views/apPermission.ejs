@@ -1,26 +1,47 @@
-<h2>Global Permissions</h2>
+<h1 class="px-0 mt-2">Global Permissions</h1>
 
-<form action="/ap/pex" method="POST">
-    <h3>Anonymous</h3>
-    <label for="A_REGISTER">Register</label>
-    <input type="checkbox" name="A_REGISTER" <%= A_REGISTER %>
-    <br>
-    <label for="A_VIEW_FORUM">View Forum</label>
-    <input type="checkbox" name="A_VIEW_FORUM" <%= A_VIEW_FORUM %>
-    <br>
-    <label for="A_VIEW_USER">View User</label>
-    <input type="checkbox" name="A_VIEW_USER" <%= A_VIEW_USER %>
+<hr>
 
-    <br>
-    <h3>Registered User</h3>
-    <label for="U_CREATE_FORUM">Create Forum</label>
-    <input type="checkbox" name="U_CREATE_FORUM" <%= U_CREATE_FORUM %>
-    <br>
-
-    <h3>Moderator</h3>
-    <label for="M_CREATE_FORUM">Create Forum</label>
-    <input type="checkbox" name="M_CREATE_FORUM" <%= M_CREATE_FORUM %>
-    <br>
-    <input type="submit" value="Save">
-
+<form method="POST" action="/ap/pex">
+    <table class="table">
+        <tr>
+            <th>Action</th>
+            <th class="col-sm-2">Anonymous</th>
+            <th class="col-sm-2">User</th>
+            <th class="col-sm-2">Moderator</th>
+        </tr>
+        <tr>
+            <td>Register</td>
+            <td><input type="checkbox" name="A_REGISTER" <%= A_REGISTER %> ></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>View Forum</td>
+            <td><input type="checkbox" name="A_VIEW_FORUM" <%= A_VIEW_FORUM %> ></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>View User</td>
+            <td><input type="checkbox" name="A_VIEW_USER" <%= A_VIEW_USER %> ></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Create Forum</td>
+            <td></td>
+            <td><input type="checkbox" name="U_CREATE_FORUM" <%= U_CREATE_FORUM %> ></td>
+            <td><input type="checkbox" name="M_CREATE_FORUM" <%= M_CREATE_FORUM %> ></td>
+        </tr>
+        <tr>
+            <td>Can change forum permission (if CREATE FORUM is enabled)</td>
+            <td></td>
+            <td><input type="checkbox" name="U_CHANGE_FORUM_PEX" <%= U_CHANGE_FORUM_PEX %> ></td>
+            <td><input type="checkbox" name="M_CHANGE_FORUM_PEX" <%= M_CHANGE_FORUM_PEX %> ></td>
+        </tr>
+    </table>
+    <div class="p-1 text-end">
+        <button class="px-3 btn btn-primary">Change</button>
+    </div>
 </form>

@@ -6,6 +6,7 @@
 
 <h3 class="mt-3">Change Description</h3>
 <form method="POST" action="/fsettings/<%= forumName %>">
+    <input type="hidden" name="_csrf" value="<%= TOKEN %>">
 <div class="mb-3">
     <label for="description" class="form-label">Description</label>
     <textarea class="form-control" name="description" rows="3"><%= description %></textarea>
@@ -19,6 +20,7 @@
 <hr>
 <h3>Permission</h3>
 <form method="POST" action="/fsettings/<%= forumName %>">
+    <input type="hidden" name="_csrf" value="<%= TOKEN %>">
     <table class="table">
         <tr>
             <th>Action</th>

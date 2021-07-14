@@ -2,7 +2,6 @@ require('dotenv').config();
 const PORT = process.env.BOARD_PORT || 3000;
 
 const fastify = require('fastify')({ logger: false });
-const fs = require('fs');
 const path = require('path');
 const routes = require('./src/routes/routes');
 const pex = require('./src/util/permissionManager');
@@ -11,24 +10,28 @@ const cache = require('./src/util/cache');
 
 (async function () {
 
-    fastify.register(require('fastify-formbody'));
+    await fastify.register(require('fastify-formbody'));
 
-    fastify.register(require('fastify-secure-session'), {
+    await fastify.register(require('fastify-secure-session'), {
         cookieName: 'voidbb',
         secret: process.env.SECRET,
         cookie: {
-            path: '/'
+            path: '/',
+            httpOnly: true,
+            sameSite: 'strict'
         }
     });
 
-    fastify.register(require('fastify-flash'));
+    await fastify.register(require('fastify-csrf'), { sessionPlugin: 'fastify-secure-session' });
 
-    fastify.register(require('fastify-static'), {
+    await fastify.register(require('fastify-flash'));
+
+    await fastify.register(require('fastify-static'), {
         root: path.join(__dirname, 'public'),
         prefix: '/'
     });
 
-    fastify.register(require('point-of-view'), {
+    await fastify.register(require('point-of-view'), {
         engine: {
             ejs: require('ejs')
         },

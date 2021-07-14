@@ -2,7 +2,7 @@ const pex = require('../util/permissionManager');
 const variable = require('../util/variableManager');
 
 module.exports = {
-    get: function(request, reply) {
+    get: async function(request, reply) {
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
         } else {
@@ -25,6 +25,7 @@ module.exports = {
                 viewArgs.M_CHANGE_FORUM_PEX = (moderatorMask[pex.globalBit.CHANGE_FORUM_PEX] == '1'?'checked':'');
 
 
+                viewArgs.TOKEN = await reply.generateCsrf();
                 reply.view('apPermission.ejs', viewArgs);
             } else {
                 reply.redirect('/ap');

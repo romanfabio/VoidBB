@@ -39,13 +39,14 @@ module.exports = (app) => {
                 type: "object",
                 properties: {
                     name: {type: 'string', nullable: false},
-                    description: {type: 'string', nullable: false}
+                    description: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['name','description']
+                required: ['name','description', '_csrf']
             }
         },
         handler: newForumController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -79,11 +80,12 @@ module.exports = (app) => {
         body: {
             type: "object",
             properties: {
-                action: {type: 'string', nullable: false}
+                action: {type: 'string', nullable: false},
+                _csrf: {type: 'string', nullable: false}
             },
-            required: ['action']
+            required: ['action', '_csrf']
         },
         handler: fSettingsController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

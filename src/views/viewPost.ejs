@@ -25,6 +25,7 @@
 
 <% if(locals.canComment) { %>
 <form action="/p/<%= post.id %>" method="POST">
+    <input type="hidden" name="_csrf" value="<%= TOKEN %>">
     <div class="my-3">
         <textarea class="form-control" name="description" rows="2" placeholder="Comment something..."></textarea>
     </div>

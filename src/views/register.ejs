@@ -1,5 +1,6 @@
 <h1 class="px-0 mt-2">Register</h1>
 <form method="POST" action="/register" class="col-sm-4">
+    <input type="hidden" name="_csrf" value="<%= TOKEN %>">
     <div class="p-1">
         <label for="username" class="form-label">Username</label>
         <input type="text" name="username" class="form-control">

@@ -56,6 +56,8 @@ module.exports = {
 
                 }
 
+                viewArgs.TOKEN = await reply.generateCsrf();
+
                 reply.view('fSettings.ejs', viewArgs);
 
             } catch (e) {

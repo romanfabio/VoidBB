@@ -37,13 +37,14 @@ module.exports = (app) => {
             body: {
                 type: "object",
                 properties: {
-                    description: {type: 'string', nullable: false}
+                    description: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['description']
+                required: ['description', '_csrf']
             }
         },
         handler: viewPostController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook]
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook]
     });
 
     app.route({
@@ -77,12 +78,13 @@ module.exports = (app) => {
                 type: "object",
                 properties: {
                     title: {type: 'string', nullable: false},
-                    description: {type: 'string', nullable: false}
+                    description: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['title','description']
+                required: ['title','description', '_csrf']
             }
         },
         handler: newPostController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

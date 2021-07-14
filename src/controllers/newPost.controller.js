@@ -13,10 +13,8 @@ module.exports = {
 
             if (!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_FORUM)) {
 
-                viewArgs.back = '/f/' + name;
-                viewArgs.ERROR = 'You must be logged to do that';
-
-                reply.view('login.ejs', viewArgs);
+                request.flash('error', 'You must be logged to do that');
+                reply.redirect('/login');
                 return;
             }
 
@@ -35,6 +33,7 @@ module.exports = {
 
                         // Board admin and forum admin have full permission
                         if (forum.creator === username || request.user.globalGroup === pex.GLOBAL_ADMIN) {
+                            viewArgs.TOKEN = await reply.generateCsrf();
                             reply.view('newPost.ejs', viewArgs);
                             return;
                         }
@@ -44,22 +43,28 @@ module.exports = {
 
                         if (!result) {
                             // Normal user
-                            if (forum.pexMask[pex.forumBit.U_CRT_POST] == '1')
+                            if (forum.pexMask[pex.forumBit.U_CRT_POST] == '1') {
+                                viewArgs.TOKEN = await reply.generateCsrf();
                                 reply.view('newPost.ejs', viewArgs);
+                            }
                             else
                                 reply.redirect('/f/' + name);
                         } else {
                             // Moderator of this forum
-                            if (forum.pexMask[pex.forumBit.M_CRT_POST] == '1')
+                            if (forum.pexMask[pex.forumBit.M_CRT_POST] == '1') {
+                                viewArgs.TOKEN = await reply.generateCsrf();
                                 reply.view('newPost.ejs', viewArgs);
+                            }
                             else
                                 reply.redirect('/f/' + name);
                         }
 
                     } else {
                         // Anonymous
-                        if (forum.pexMask[pex.forumBit.A_CRT_POST] == '1')
+                        if (forum.pexMask[pex.forumBit.A_CRT_POST] == '1') {
+                            viewArgs.TOKEN = await reply.generateCsrf();
                             reply.view('newPost.ejs', viewArgs);
+                        }
                         else
                             reply.redirect('/f/' + name);
                     }
@@ -89,10 +94,8 @@ module.exports = {
             // TODO Post method are aonly allowed to redirect, no render views
             if (!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_FORUM)) {
 
-                viewArgs.back = '/f/' + name;
-                viewArgs.ERROR = 'You must be logged to do that';
-
-                reply.view('login.ejs', viewArgs);
+                request.flash('error', 'You must be logged to do that');
+                reply.redirect('/login');
                 return;
             }
 

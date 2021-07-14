@@ -21,13 +21,14 @@ module.exports = (app) => {
             body: {
                 type: "object",
                 properties: {
-                    board_name: {type: 'string', nullable: false}
+                    board_name: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['boardName']
+                required: ['boardName', '_csrf']
             }
         },
         handler: apGeneralController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -45,13 +46,14 @@ module.exports = (app) => {
                 type: "object",
                 properties: {
                     username: {type: 'string', nullable: false},
-                    password: {type: 'string', nullable: false}
+                    password: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['password']
+                required: ['password', '_csrf']
             }
         },
         handler: apLoginController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 
     app.route({
@@ -67,10 +69,13 @@ module.exports = (app) => {
         schema: {
             body: {
                 type: "object",
-                properties: {}
+                properties: {
+                    _csrf: {type: 'string', nullable: false}
+                },
+                required: ['_csrf']
             }
         },
         handler: apPermissionController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook]
+        preHandler: [app.csrfProtection,isAuthHook, viewHook, messageHook, globalHook]
     });
 };

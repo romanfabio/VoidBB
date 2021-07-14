@@ -1,6 +1,7 @@
 <h1 class="px-0 mt-2">New Post</h1>
 
 <form method="post" action="/p?f=<%= forumName %>">
+    <input type="hidden" name="_csrf" value="<%= TOKEN %>">
 <div class="mb-3">
     <label for="title" class="form-label">Title</label>
     <input type="text" class="form-control" name="title">

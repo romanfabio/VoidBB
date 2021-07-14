@@ -3,9 +3,10 @@ const pex = require('../util/permissionManager');
 const variable = require('../util/variableManager');
 
 module.exports = {
-    get: function (request, reply) {
+    get: async function (request, reply) {
         //pex.GLOBAL_ANONYMOUS can't have CREATE_FORUM permission
         if(pex.isGlobalSet(request.user.globalGroup, pex.globalBit.CREATE_FORUM)) {
+            request.viewArgs.TOKEN = await reply.generateCsrf();
             reply.view('newForum.ejs', request.viewArgs);
         }
         else {

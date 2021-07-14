@@ -1,11 +1,13 @@
 const bcrypt = require('bcrypt');
 
 module.exports = {
-    get: function (request, reply) {
+    get: async function (request, reply) {
         if(request.user.username) // User is already authenticated
             reply.redirect('/');
-        else 
+        else {
+            request.viewArgs.TOKEN = await reply.generateCsrf();
             reply.view('login.ejs', request.viewArgs);
+        }
 
     },
 
@@ -16,8 +18,6 @@ module.exports = {
             reply.redirect('/');
             return;
         }
-
-        const viewArgs = request.viewArgs;
 
         const data = request.body;
 

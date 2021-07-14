@@ -21,12 +21,13 @@ module.exports = (app) => {
                 properties: {
                     username: {type: 'string', nullable: false},
                     email: {type:'string', nullable: false},
-                    password: {type: 'string', nullable: false}
+                    password: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['username','email','password']
+                required: ['username','email','password','_csrf']
             }
         },
         handler: registerController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

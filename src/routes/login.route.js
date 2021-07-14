@@ -21,12 +21,13 @@ module.exports = (app) => {
                 properties: {
                     username: {type: 'string', nullable: false},
                     password: {type: 'string', nullable: false},
-                    back: {type: 'string', nullable: false}
+                    back: {type: 'string', nullable: false},
+                    _csrf: {type: 'string', nullable: false}
                 },
-                required: ['username','password']
+                required: ['username','password', '_csrf']
             }
         },
         handler: loginController.post,
-        preHandler: [isAuthHook, viewHook, messageHook, globalHook] 
+        preHandler: [app.csrfProtection, isAuthHook, viewHook, messageHook, globalHook] 
     });
 };

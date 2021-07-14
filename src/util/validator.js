@@ -3,7 +3,7 @@ const variable = require('./variableManager');
 
 module.exports = {
     isBoardName: (str) => {
-        return /^[\x2D\x30-\x39\x41-\x5A\x5F\x61-\x7A]+$/.test(str) &&
+        return /^[\x20\x2D\x30-\x39\x41-\x5A\x5F\x61-\x7A]+$/.test(str) &&
             str.length > 0 &&
             str.length <= 32;
     },

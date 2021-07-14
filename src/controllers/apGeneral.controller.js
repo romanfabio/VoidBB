@@ -3,12 +3,13 @@ const validator = require('../util/validator');
 const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: function (request, reply) {
+    get: async function (request, reply) {
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) {
             reply.redirect('/');
         } else {
 
             if(request.user.ap) {
+                viewArgs.TOKEN = await reply.generateCsrf();
                 request.viewArgs.boardName = variable.get('BOARD_NAME');
                 reply.view('apGeneral.ejs', request.viewArgs);
             } else {

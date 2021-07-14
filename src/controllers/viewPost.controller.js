@@ -10,10 +10,8 @@ module.exports = {
 
         if (!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_FORUM)) {
 
-            viewArgs.back = '/p/' + id;
-            viewArgs.ERROR = 'You must be logged to do that';
-
-            reply.view('login.ejs', viewArgs);
+            request.flash('error', 'You must be logged to do that');
+            reply.redirect('/login');
             return;
         }
 
@@ -53,6 +51,7 @@ module.exports = {
 
                 viewArgs.comments = result;
 
+                viewArgs.TOKEN = await reply.generateCsrf();
                 reply.view('viewPost.ejs', viewArgs);
 
             } else {
@@ -74,10 +73,8 @@ module.exports = {
         // TODO Post method are aonly allowed to redirect, no render views
         if (!pex.isGlobalSet(request.user.globalGroup, pex.globalBit.VIEW_FORUM)) {
 
-            viewArgs.back = '/p/' + id;
-            viewArgs.ERROR = 'You must be logged to do that';
-
-            reply.view('login.ejs', viewArgs);
+            request.flash('error', 'You must be logged to do that');
+            reply.redirect('/login');
             return;
         }
 

@@ -3,12 +3,14 @@ const validator = require('../util/validator');
 const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: function (request, reply) {
+    get: async function (request, reply) {
         // User is already authenticated or doesn't have the permission to register
         if(request.user.username || !pex.isGlobalSet(pex.GLOBAL_ANONYMOUS, pex.globalBit.REGISTER))
             reply.redirect('/');
-        else
+        else {
+            request.viewArgs.TOKEN = await reply.generateCsrf();
             reply.view('register.ejs', request.viewArgs);
+        }
     },
 
     post: async function (request, reply) {

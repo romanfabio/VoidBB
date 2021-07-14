@@ -2,13 +2,14 @@ const bcrypt = require('bcrypt');
 const pex = require('../util/permissionManager');
 
 module.exports = {
-    get: function (request, reply) {
+    get: async function (request, reply) {
         if(request.user.globalGroup !== pex.GLOBAL_ADMIN) // Only admins have access to the admin panel
             reply.redirect('/');
         else {
             if(request.user.ap) {
                 reply.redirect('/ap/general');
             } else {
+                request.viewArgs.TOKEN = await reply.generateCsrf();
                 reply.view('apLogin.ejs', request.viewArgs);
             }
         }
